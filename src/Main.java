@@ -1,7 +1,7 @@
-package services;
-
 import modules.EpicTask;
 import modules.SubTask;
+import services.Manager;
+import services.Status;
 
 /**
  * В классе проведены некоторые тесты для ознакомления
