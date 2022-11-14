@@ -28,10 +28,8 @@ public class Main {
         System.out.println(manager.getListSubTask());
 
         //Изменяем статусы созданных объектов и обновляем
-        manager.getSubTaskById(2).setStatus(Status.IN_PROGRESS);
-        manager.updateStatus(1);
-        manager.getSubTaskById(5).setStatus(Status.DONE);
-        manager.updateStatus(4);
+        manager.updateSubTask((manager.getSubTaskById(2)),  Status.IN_PROGRESS);
+        manager.updateSubTask(manager.getSubTaskById(5), Status.DONE);
 
         // Печатаем списки после изменения статусов
         System.out.println();
@@ -42,5 +40,6 @@ public class Main {
         // Удаляем задачу из одного из эпиков
         manager.removeByIdEpicTas(4);
         System.out.println(manager.getListEpicTask());
+        System.out.println(manager.getListSubTask());
     }
 }
