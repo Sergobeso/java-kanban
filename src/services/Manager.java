@@ -18,31 +18,28 @@ import java.util.HashMap;
  */
 
 public class Manager {
-    private static int id;
+    private int id;
 
-    HashMap<Integer, Task> taskMap = new HashMap<>();
-    HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
-    HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
+    private HashMap<Integer, Task> taskMap = new HashMap<>();
+    private HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
+    private HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
 
     // Создание задачи
     public void setTask(Task task) {
         id++;
         task.setId(id);
-        task.setStatus(Status.NEW);
         taskMap.put(task.getId(), task);
     }
 
     public void setEpicTask(EpicTask epicTask) {
         id++;
         epicTask.setId(id);
-        epicTask.setStatus(Status.NEW);
         epicTaskMap.put(epicTask.getId(), epicTask);
     }
 
     public void setSubTask(SubTask subTask, EpicTask epicTask) {
         id++;
         subTask.setId(id);
-        subTask.setStatus(Status.NEW);
         subTaskMap.put(subTask.getId(), subTask);
         epicTask.addIdSubTask(id);
     }
@@ -95,8 +92,11 @@ public class Manager {
         epicTaskMap.put(epicTask.getId(), epicTask);
     }
 
-    public void updateSubTask(SubTask subTask) {
+    public void updateSubTask(SubTask subTask, Status status) {
+        subTask.setStatus(status);
         subTaskMap.put(subTask.getId(), subTask);
+        EpicTask epicTask = epicTaskMap.get(subTask.getEpicId());
+        updateStatus(epicTask.getId());
     }
 
     // Удаление по идентификатору.
@@ -111,6 +111,9 @@ public class Manager {
         if (!epicTaskMap.containsKey(id)) {
             return;
         }
+        for (Integer val: epicTaskMap.get(id).getListSubTaskId()) {
+            removeByIdSubTask(val);
+        }
         epicTaskMap.remove(id);
     }
 
@@ -123,14 +126,10 @@ public class Manager {
 
     // Получение списка всех подзадач определённого эпика.
     public ArrayList<SubTask> getListSubTask(EpicTask epicTask) {
-        ArrayList<SubTask> listSubTask = new ArrayList<>();
-        int subId = epicTask.getId();
-        for (Integer key : subTaskMap.keySet()) {
-            SubTask subTask = subTaskMap.get(key);
-            if (subTask.getEpicId() == subId) {
-                listSubTask.add(subTask);
+          ArrayList<SubTask> listSubTask = new ArrayList<>();
+            for (Integer key : epicTask.getListSubTaskId()) {
+                listSubTask.add(subTaskMap.get(key));
             }
-        }
         return listSubTask;
     }
 
@@ -141,13 +140,12 @@ public class Manager {
      * во всех остальных случаях статус должен быть IN_PROGRESS.
      */
 
-    public void updateStatus(int epicId) {
+    private void updateStatus(int epicId) {
         boolean isNew = false;
         boolean isInProgress = false;
         boolean isDone = false;
         int countDone = 0;
         ArrayList<Integer> listSubTaskId = epicTaskMap.get(epicId).getListSubTaskId();
-
 
         if (listSubTaskId.isEmpty()) {
             isNew = true;
