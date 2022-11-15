@@ -6,6 +6,7 @@ import modules.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Класс описывающий взаимодействие с различными задачами.
@@ -72,15 +73,15 @@ public class Manager {
 
     //Получение по идентификатору.
     public Task getTaskById(int id) {
-        return taskMap.get(id);
+        return Optional.ofNullable(taskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     public EpicTask getEpicTaskById(int id) {
-        return epicTaskMap.get(id);
+        return Optional.ofNullable(epicTaskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     public SubTask getSubTaskById(int id) {
-        return subTaskMap.get(id);
+        return Optional.ofNullable(subTaskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
@@ -92,11 +93,9 @@ public class Manager {
         epicTaskMap.put(epicTask.getId(), epicTask);
     }
 
-    public void updateSubTask(SubTask subTask, Status status) {
-        subTask.setStatus(status);
+    public void updateSubTask(SubTask subTask) {
         subTaskMap.put(subTask.getId(), subTask);
-        EpicTask epicTask = epicTaskMap.get(subTask.getEpicId());
-        updateStatus(epicTask.getId());
+        updateStatus(subTask.getEpicId());
     }
 
     // Удаление по идентификатору.
@@ -107,7 +106,7 @@ public class Manager {
         taskMap.remove(id);
     }
 
-    public void removeByIdEpicTas(int id) {
+    public void removeByIdEpicTask(int id) {
         if (!epicTaskMap.containsKey(id)) {
             return;
         }
@@ -145,31 +144,35 @@ public class Manager {
         boolean isInProgress = false;
         boolean isDone = false;
         int countDone = 0;
-        ArrayList<Integer> listSubTaskId = epicTaskMap.get(epicId).getListSubTaskId();
+        ArrayList<Integer> listSubTaskId;
 
-        if (listSubTaskId.isEmpty()) {
-            isNew = true;
-        } else {
-            for (int id : epicTaskMap.get(epicId).getListSubTaskId()) {
-                if (getSubTaskById(id).getStatus() == Status.NEW) {
-                    isNew = true;
-                } else if (getSubTaskById(id).getStatus() == Status.IN_PROGRESS) {
-                    isInProgress = true;
-                    break;
-                } else if (getSubTaskById(id).getStatus() == Status.DONE) {
-                    isDone = true;
-                    countDone++;
+        try {
+            listSubTaskId = epicTaskMap.get(epicId).getListSubTaskId();
+            if (listSubTaskId.isEmpty()) {
+                isNew = true;
+            } else {
+                for (int id : epicTaskMap.get(epicId).getListSubTaskId()) {
+                    if (getSubTaskById(id).getStatus() == Status.NEW) {
+                        isNew = true;
+                    } else if (getSubTaskById(id).getStatus() == Status.IN_PROGRESS) {
+                        isInProgress = true;
+                        break;
+                    } else if (getSubTaskById(id).getStatus() == Status.DONE) {
+                        isDone = true;
+                        countDone++;
+                    }
                 }
             }
-        }
-        if (isNew && !isInProgress && !isDone) {
-            epicTaskMap.get(epicId).setStatus(Status.NEW);
-        } else if (isDone && (countDone == epicTaskMap.get(epicId).getListSubTaskId().size())) {
-            epicTaskMap.get(epicId).setStatus(Status.DONE);
-        } else {
-            epicTaskMap.get(epicId).setStatus(Status.IN_PROGRESS);
-        }
+            if (isNew && !isInProgress && !isDone) {
+                epicTaskMap.get(epicId).setStatus(Status.NEW);
+            } else if (isDone && (countDone == epicTaskMap.get(epicId).getListSubTaskId().size())) {
+                epicTaskMap.get(epicId).setStatus(Status.DONE);
+            } else {
+                epicTaskMap.get(epicId).setStatus(Status.IN_PROGRESS);
+            }
+        } catch(NullPointerException e){
+                System.out.println(("Список задач пуст"));
+           }
     }
-
 }
 
