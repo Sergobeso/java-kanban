@@ -1,13 +1,21 @@
 package services;
 
-public class Managers<TaskManager> {
-    public TaskManager taskManager;
+import modules.Task;
 
-    public Managers (TaskManager taskManager){
-        this.taskManager = taskManager;
-    }
+import java.util.List;
+
+/**
+ * Утилитарный класс, овечает за создание менеджера задач
+ * Имеет метод getDefaultHistory - возвращать объект InMemoryHistoryManager (историю просмотров)
+ */
+
+public class Managers {
 
     public TaskManager getDefault(){
-        return taskManager;
+        return new InMemoryTaskManager();
+    }
+
+    public static List<Task> getDefaultHistory(){
+        return new InMemoryHistoryManager().getHistory();
     }
 }
