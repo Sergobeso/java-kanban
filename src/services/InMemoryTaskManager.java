@@ -6,28 +6,22 @@ import modules.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 /**
- * Класс описывающий взаимодействие с различными задачами.
- * Имеет следующую функциональность:
- * - создает задачи
- * - получает задачи
- * - обновляет задачи
- * - удаляет задачи
- * - обновляет статус EpicTask
+ * Класс описывающий реализацию интерфейса TaskManager.
+ * а также хранит в памяти внесенные задачи
+ * обновляет статус EpicTask
  */
 
-public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
+public class InMemoryTaskManager implements TaskManager {
     private int id;
-    private static final int MAX_LENGTH_IN_HISTORY = 10;
     private final HashMap<Integer, Task> taskMap = new HashMap<>();
     private final HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
     private final HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
-    public List<Tasks> historyIdList = new ArrayList<>();
+    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
-    // Создание задачи
+
     @Override
     public void setTask(Task task) {
         id++;
@@ -50,7 +44,7 @@ public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
         epicTask.addIdSubTask(id);
     }
 
-    // Получение списка всех задач.
+
     @Override
     public ArrayList<Task> getListTask() {
         return new ArrayList<>(taskMap.values());
@@ -66,7 +60,7 @@ public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
         return new ArrayList<>(subTaskMap.values());
     }
 
-    // Удаление всех задач.
+
     @Override
     public void clearTask() {
         taskMap.clear();
@@ -82,26 +76,26 @@ public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
         subTaskMap.clear();
     }
 
-    //Получение по идентификатору.
+
     @Override
     public Task getTaskById(int id) {
-        addIdHistory((Tasks) taskMap.get(id));
+        inMemoryHistoryManager.add(taskMap.get(id));
         return Optional.ofNullable(taskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     @Override
     public EpicTask getEpicTaskById(int id) {
-        addIdHistory((Tasks) epicTaskMap.get(id));
+        inMemoryHistoryManager.add(epicTaskMap.get(id));
         return Optional.ofNullable(epicTaskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     @Override
     public SubTask getSubTaskById(int id) {
-        addIdHistory((Tasks) subTaskMap.get(id));
+        inMemoryHistoryManager.add(subTaskMap.get(id));
         return Optional.ofNullable(subTaskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
-    //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
+
     @Override
     public void updateTask(Task task) {
         taskMap.put(task.getId(), task);
@@ -118,7 +112,7 @@ public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
         updateStatus(subTask.getEpicId());
     }
 
-    // Удаление по идентификатору.
+
     @Override
     public void removeByIdTask(int id) {
         if (!taskMap.containsKey(id)) {
@@ -146,7 +140,7 @@ public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
         subTaskMap.remove(id);
     }
 
-    // Получение списка всех подзадач определённого эпика.
+
     @Override
     public ArrayList<SubTask> getListSubTask(EpicTask epicTask) {
         ArrayList<SubTask> listSubTask = new ArrayList<>();
@@ -154,19 +148,6 @@ public class InMemoryTaskManager<Tasks extends Task> implements TaskManager  {
             listSubTask.add(subTaskMap.get(key));
         }
         return listSubTask;
-    }
-
-    @Override
-    public List<Tasks> getHistory() {
-        return historyIdList;
-    }
-
-    // метод проверяет список на величину списка и добавляет в историю просмотров
-    private void addIdHistory(Tasks t) {
-        if (historyIdList.size() == MAX_LENGTH_IN_HISTORY) {
-            historyIdList.remove(0);
-            historyIdList.add(t);
-        } else historyIdList.add(t);
     }
 
 
