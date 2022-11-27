@@ -19,25 +19,25 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> taskMap = new HashMap<>();
     private final HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
     private final HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
-    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    private final HistoryManager historyManager =  Managers.getDefaultHistory();
 
 
     @Override
-    public void setTask(Task task) {
+    public void addTask(Task task) {
         id++;
         task.setId(id);
         taskMap.put(task.getId(), task);
     }
 
     @Override
-    public void setEpicTask(EpicTask epicTask) {
+    public void addEpicTask(EpicTask epicTask) {
         id++;
         epicTask.setId(id);
         epicTaskMap.put(epicTask.getId(), epicTask);
     }
 
     @Override
-    public void setSubTask(SubTask subTask, EpicTask epicTask) {
+    public void addSubTask(SubTask subTask, EpicTask epicTask) {
         id++;
         subTask.setId(id);
         subTaskMap.put(subTask.getId(), subTask);
@@ -79,19 +79,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        inMemoryHistoryManager.add(taskMap.get(id));
+        historyManager.add(taskMap.get(id));
         return Optional.ofNullable(taskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     @Override
     public EpicTask getEpicTaskById(int id) {
-        inMemoryHistoryManager.add(epicTaskMap.get(id));
+        historyManager.add(epicTaskMap.get(id));
         return Optional.ofNullable(epicTaskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
     @Override
     public SubTask getSubTaskById(int id) {
-        inMemoryHistoryManager.add(subTaskMap.get(id));
+        historyManager.add(subTaskMap.get(id));
         return Optional.ofNullable(subTaskMap.get(id)).orElseThrow(() -> new NullPointerException("ID не найден"));
     }
 
