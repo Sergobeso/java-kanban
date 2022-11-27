@@ -2,7 +2,7 @@ package services;
 
 import modules.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static List<Task> historyList = new ArrayList<>();
+    private static final List<Task> historyList = new LinkedList<>();
     private static final int MAX_LENGTH_IN_HISTORY = 10;
 
     @Override
