@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public interface TaskManager {
 
     // Создание задачи
-    void setTask(Task task);
-    void setEpicTask(EpicTask epicTask);
-    void setSubTask(SubTask subTask, EpicTask epicTask);
+    void addTask(Task task);
+    void addEpicTask(EpicTask epicTask);
+    void addSubTask(SubTask subTask, EpicTask epicTask);
 
     // Получение списка всех задач.
     ArrayList<Task> getListTask();
