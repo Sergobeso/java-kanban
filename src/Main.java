@@ -12,7 +12,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         TaskManager taskManager = Managers.getDefault();
 
         //Создаем 1 Эпик с 2 подзадачами
@@ -24,7 +23,7 @@ public class Main {
         taskManager.addEpicTask(new EpicTask("Доделать дом", "2й этап"));
         taskManager.addSubTask(new SubTask("Заказать окна", "Стеклопакеты", 4), taskManager.getEpicTaskById(4));
 
-        System.out.println(Managers.getDefaultHistory().getHistory());
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
         //Печатаем списки эпиков, задач и подзадач
 //        System.out.println(taskManager.getListTask());
@@ -35,7 +34,7 @@ public class Main {
         taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", "Залить плиту 300 мм", Status.IN_PROGRESS, 1));
         taskManager.updateSubTask(new SubTask(5, "Заказать окна", "Стеклопакеты", Status.DONE, 4));
 
-        System.out.println(Managers.getDefaultHistory().getHistory());
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
         // Печатаем списки после изменения статусов
 //        System.out.println();
@@ -52,8 +51,8 @@ public class Main {
         // manager.getTaskById(11);
 
         System.out.println("Печатаем Историю просмотров: ");
-        for (int i = 0; i < Managers.getDefaultHistory().getHistory().size(); i++) {
-            System.out.println(Managers.getDefaultHistory().getHistory().get(i));
+        for (int i = 0; i < taskManager.getHistoryManager().getHistory().size(); i++) {
+            System.out.println(taskManager.getHistoryManager().getHistory().get(i));
         }
     }
 }
