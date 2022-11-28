@@ -22,6 +22,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager =  Managers.getDefaultHistory();
 
 
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
     @Override
     public void addTask(Task task) {
         id++;
@@ -192,6 +196,5 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println(("Список задач пуст"));
         }
     }
-
 
 }
