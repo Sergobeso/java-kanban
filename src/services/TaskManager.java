@@ -16,6 +16,9 @@ import java.util.ArrayList;
 
 public interface TaskManager {
 
+    // Получение менеджера истории
+    HistoryManager getHistoryManager();
+
     // Создание задачи
     void addTask(Task task);
     void addEpicTask(EpicTask epicTask);
