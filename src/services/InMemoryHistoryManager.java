@@ -3,27 +3,24 @@ package services;
 import modules.Task;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Класс описывающий хранение и добавление истории задач
  */
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static final List<Task> historyList = new LinkedList<>();
+    private final LinkedList<Task> historyList = new LinkedList<>();
     private static final int MAX_LENGTH_IN_HISTORY = 10;
 
     @Override
-    public List<Task> getHistory() {
+    public LinkedList<Task> getHistory() {
         return historyList;
     }
 
-    // метод проверяет список на величину списка и добавляет в историю просмотров
+    // LIFO - добавление задачи в начало списка, удаление задачи из конца списка
     public void add(Task task) {
-        if (historyList.size() == MAX_LENGTH_IN_HISTORY) {
-            historyList.remove(0);
-            historyList.add(task);
-        } else historyList.add(task);
+        if (historyList.size() == MAX_LENGTH_IN_HISTORY) { historyList.removeLast();}
+        historyList.add(0, task);
     }
 
 }
