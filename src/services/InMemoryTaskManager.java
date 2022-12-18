@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> taskMap = new HashMap<>();
     private final HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
     private final HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
-    private final HistoryManager historyManager =  Managers.getDefaultHistory();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     public HistoryManager getHistoryManager() {
@@ -123,6 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         taskMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -134,6 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
             removeByIdSubTask(val);
         }
         epicTaskMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -142,6 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         subTaskMap.remove(id);
+        historyManager.remove(id);
     }
 
 
