@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Интерфейс для управления историей просмотров.
- * Имеет методы для добавления и возвращения задач в истории просмотра
+ * Имеет методы для добавления, возвращения и удаления задач в истории просмотра
  */
 
 public interface HistoryManager {
@@ -14,5 +14,7 @@ public interface HistoryManager {
     void add(Task task);
 
     List<Task> getHistory();
+
+    void remove(int id);
 
 }
