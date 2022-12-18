@@ -2,6 +2,8 @@ package modules;
 
 import services.Status;
 
+import java.util.Objects;
+
 /**
  * Класс описывающий одиночную задачу
  */
@@ -48,5 +50,18 @@ public class Task {
                 "Имя задачи='" + name + '\'' +
                 ", описание задачи='" + description + '\'' +
                 ", id=" + id + ", статус=" + getStatus() + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status);
     }
 }
