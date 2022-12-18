@@ -23,36 +23,49 @@ public class Main {
         taskManager.addEpicTask(new EpicTask("Доделать дом", "2й этап"));
         taskManager.addSubTask(new SubTask("Заказать окна", "Стеклопакеты", 4), taskManager.getEpicTaskById(4));
 
-        System.out.println(taskManager.getHistoryManager().getHistory());
+        // Создаем 3й эпик без подзадач
+        taskManager.addEpicTask(new EpicTask("Купить квартиру", ""));
+
+        // Создаем 4й эпик без подзадач
+        taskManager.addEpicTask(new EpicTask("Купить автомобиль", ""));
+        taskManager.addSubTask(new SubTask("Продать старый автомобиль", "За Много денег", 7), taskManager.getEpicTaskById(7));
+        taskManager.addSubTask(new SubTask("Взять деньги в банке", "тыщ 300 должно хватить", 7), taskManager.getEpicTaskById(7));
+        taskManager.addSubTask(new SubTask("Ехать в салон за авто", "", 7), taskManager.getEpicTaskById(7));
 
         //Печатаем списки эпиков, задач и подзадач
-//        System.out.println(taskManager.getListTask());
-//        System.out.println(taskManager.getListEpicTask());
-//        System.out.println(taskManager.getListSubTask());
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
         //Изменяем статусы созданных объектов и обновляем
         taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", "Залить плиту 300 мм", Status.IN_PROGRESS, 1));
         taskManager.updateSubTask(new SubTask(5, "Заказать окна", "Стеклопакеты", Status.DONE, 4));
 
-        System.out.println(taskManager.getHistoryManager().getHistory());
+        //запросите созданные задачи несколько раз в разном порядке;
+        taskManager.getSubTaskById(10);
+        taskManager.getSubTaskById(9);
+        taskManager.getSubTaskById(10);
+        taskManager.getSubTaskById(3);
+        taskManager.getSubTaskById(8);
+        taskManager.getSubTaskById(5);
+        taskManager.getSubTaskById(8);
+        taskManager.getSubTaskById(2);
+        taskManager.getEpicTaskById(1);
+        taskManager.getEpicTaskById(7);
+        taskManager.getEpicTaskById(4);
+        taskManager.getEpicTaskById(1);
+        taskManager.getSubTaskById(2);
+        taskManager.getEpicTaskById(1);
+        taskManager.getSubTaskById(2);
 
-        // Печатаем списки после изменения статусов
-//        System.out.println();
-//        System.out.println(taskManager.getListEpicTask());
-//        System.out.println(taskManager.getListSubTask());
-//        System.out.println();
-
-
-        // Удаляем задачу из одного из эпиков
-//        taskManager.removeByIdEpicTask(4);
-//        System.out.println(taskManager.getListEpicTask());
-//        System.out.println(taskManager.getListSubTask());
-
-        // manager.getTaskById(11);
 
         System.out.println("Печатаем Историю просмотров: ");
         for (int i = 0; i < taskManager.getHistoryManager().getHistory().size(); i++) {
-            System.out.println(taskManager.getHistoryManager().getHistory().get(i));
+            System.out.println(i + 1 + ". " + taskManager.getHistoryManager().getHistory().get(i));
+        }
+
+        taskManager.removeByIdEpicTask(7);
+        System.out.println("Печатаем Историю просмотров после удаления: ");
+        for (int i = 0; i < taskManager.getHistoryManager().getHistory().size(); i++) {
+            System.out.println(i + 1 + ". " + taskManager.getHistoryManager().getHistory().get(i));
         }
     }
 }
