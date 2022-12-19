@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 
 public class InMemoryHistoryManager implements HistoryManager {
-    HashMap<Integer, Node> historyMap = new HashMap<>();
+    private final HashMap<Integer, Node> historyMap = new HashMap<>();
     private Node<Task> head;
     private Node<Task> tail;
 
@@ -31,6 +31,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         removeNode(historyMap.get(id));
+        historyMap.remove(id);
     }
 
     //  linkLast добавляет задачу в конец списка
