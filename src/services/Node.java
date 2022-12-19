@@ -1,11 +1,11 @@
 package services;
 
-public class Node<Task> {
-    public Task task;
-    public Node<Task> next;
-    public Node<Task> prev;
+public class Node<E> {
+    protected E task;
+    protected Node<E> next;
+    protected Node<E> prev;
 
-    public Node(Node<Task> prev, Task task, Node<Task> next){
+    protected Node(Node<E> prev, E task, Node<E> next){
         this.task = task;
         this.next = next;
         this.prev = prev;
