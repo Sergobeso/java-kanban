@@ -42,7 +42,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (oldTail == null) {
             head = newNode;
         } else {
-            oldTail.next = newNode;
+            oldTail.setNext(newNode);
         }
         historyMap.put(task.getId(), newNode);
     }
@@ -52,8 +52,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         ArrayList<Task> list = new ArrayList<>();
         Node<Task> tempNode = head;
         while (tempNode != null) {
-            list.add(tempNode.task);
-            tempNode = tempNode.next;
+            list.add(tempNode.getElement());
+            tempNode = tempNode.getNext();
         }
         return list;
     }
@@ -61,20 +61,20 @@ public class InMemoryHistoryManager implements HistoryManager {
     // удаляет узел связанного списка
     private void removeNode(Node<Task> node) {
         if (node == head && node != tail) {
-            head = node.next;
-            head.prev = null;
+            head = node.getNext();
+            head.setPrev(null);
         } else if (node == tail && node != head) {
-            tail = node.prev;
-            tail.next = null;
+            tail = node.getPrev();
+            tail.setNext(null);
         } else if (head == tail) {
             head = null;
             tail = null;
         } else {
-            Node<Task> next = node.next;
-            Node<Task> prev = node.prev;
+            Node<Task> next = node.getNext();
+            Node<Task> prev = node.getPrev();
 
-            next.prev = prev;
-            prev.next = next;
+            next.setPrev(prev);
+            prev.setNext(next);
         }
     }
 }
