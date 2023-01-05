@@ -1,6 +1,7 @@
 package modules;
 
 import services.Status;
+import services.TypeTask;
 
 import java.util.Objects;
 
@@ -18,6 +19,13 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+    }
+
+    public Task(int id, String name, Status status, String description){
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.id = id;
     }
 
     public String getName() {
@@ -46,10 +54,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "Имя задачи='" + name + '\'' +
-                ", описание задачи='" + description + '\'' +
-                ", id=" + id + ", статус=" + getStatus() + '}';
+        return String.format("%d,%s,%s,%s,%s,", id, TypeTask.TASK, name, status, description);
+//                "Имя задачи='" + name + '\'' +
+//                ", описание задачи='" + description + '\'' +
+//                ", id=" + id + ", статус=" + getStatus() + '}';
     }
 
     @Override
