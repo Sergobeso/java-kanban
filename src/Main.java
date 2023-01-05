@@ -36,8 +36,8 @@ public class Main {
         System.out.println(taskManager.getHistoryManager().getHistory());
 
         //Изменяем статусы созданных объектов и обновляем
-        taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", "Залить плиту 300 мм", Status.IN_PROGRESS, 1));
-        taskManager.updateSubTask(new SubTask(5, "Заказать окна", "Стеклопакеты", Status.DONE, 4));
+        taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", Status.IN_PROGRESS, "Залить плиту 300 мм", 1));
+        taskManager.updateSubTask(new SubTask(5, "Заказать окна", Status.DONE, "Стеклопакеты", 4));
 
         //запросите созданные задачи несколько раз в разном порядке;
         taskManager.getSubTaskById(10);
