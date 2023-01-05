@@ -1,6 +1,7 @@
 package modules;
 
 import services.Status;
+import services.TypeTask;
 
 /**
  * Класс описывающий подзадачи, которые входят в главную задачу (EpicTask). Идентификация главной задачи
@@ -16,7 +17,7 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public SubTask(int id ,String name, String description, Status status, int epicId) {
+    public SubTask(int id ,String name, Status status, String description,  int epicId) {
         super(name, description);
         this.epicId = epicId;
         this.id = id;
@@ -29,10 +30,11 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask{" +
-                "Имя задачи='" + name + '\'' +
-                ", описание задачи='" + description + '\'' +
-                ", id=" + id + ", статус=" + getStatus() + '}';
+        return String.format("%d,%s,%s,%s,%s,%d", id, TypeTask.SUBTASK, name, status, description, epicId);
+//                "SubTask{" +
+//                "Имя задачи='" + name + '\'' +
+//                ", описание задачи='" + description + '\'' +
+//                ", id=" + id + ", статус=" + getStatus() + '}';
     }
 
 }
