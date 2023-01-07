@@ -23,6 +23,7 @@ public class SubTask extends Task {
         this.epicId = epicId;
         this.id = id;
         this.status = status;
+        this.typeTask = TypeTask.SUBTASK;
     }
 
     public SubTask(String[] data) {
