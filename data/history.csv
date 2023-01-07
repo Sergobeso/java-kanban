@@ -6,4 +6,4 @@ id,type,name,status,description,epic
 3,SUBTASK,Построить стены,NEW,Газобетон 375 мм,1
 5,SUBTASK,Заказать окна,DONE,Стеклопакеты,4
 
-3,5,4,1,2
+3,5,6,4,1,2
