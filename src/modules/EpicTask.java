@@ -15,11 +15,19 @@ public class EpicTask extends Task {
     public EpicTask(String name, String description) {
         super(name, description);
         listSubTaskId = new ArrayList<>();
+        this.typeTask = TypeTask.EPICTASK;
     }
 
     public EpicTask(int id, String name, Status status, String description) {
         super(id, name, status, description);
         listSubTaskId = new ArrayList<>();
+        this.typeTask = TypeTask.EPICTASK;
+    }
+
+    public EpicTask(String[] data) {
+        super(data);
+        listSubTaskId = new ArrayList<>();
+        this.typeTask = TypeTask.EPICTASK;
     }
 
     public void addIdSubTask(int epicId) {
@@ -29,14 +37,4 @@ public class EpicTask extends Task {
     public ArrayList<Integer> getListSubTaskId() {
         return listSubTaskId;
     }
-
-    @Override
-    public String toString() {
-        return String.format("%d,%s,%s,%s,%s,", id, TypeTask.EPICTASK, name, status, description);
-//                "EpicTask{" +
-//                "Имя задачи='" + name + '\'' +
-//                ", описание задачи='" + description + '\'' + ", айдишники SubTask, которые входят в задачу" + listSubTaskId +
-//                ", id=" + id + ", статус=" + getStatus() + '}';
-    }
-
 }
