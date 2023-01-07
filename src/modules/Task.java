@@ -14,18 +14,29 @@ public class Task {
     protected String description;
     protected int id;
     protected Status status;
+    protected TypeTask typeTask;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+        this.typeTask = TypeTask.TASK;
     }
 
-    public Task(int id, String name, Status status, String description){
+    public Task(int id, String name, Status status, String description) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.id = id;
+        this.typeTask = TypeTask.TASK;
+    }
+
+    public Task(String[] data) {
+        this.name = data[2];
+        this.description = data[4];
+        this.status = Status.valueOf(data[3]);
+        this.id = Integer.parseInt(data[0]);
+        this.typeTask = TypeTask.TASK;
     }
 
     public String getName() {
@@ -44,6 +55,10 @@ public class Task {
         return id;
     }
 
+    public TypeTask getTypeTask() {
+        return typeTask;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -54,10 +69,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,", id, TypeTask.TASK, name, status, description);
-//                "Имя задачи='" + name + '\'' +
-//                ", описание задачи='" + description + '\'' +
-//                ", id=" + id + ", статус=" + getStatus() + '}';
+        return String.format("%d,%s,%s,%s,%s,", id, typeTask, name, status, description);
     }
 
     @Override
