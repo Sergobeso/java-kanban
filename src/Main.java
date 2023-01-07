@@ -1,8 +1,9 @@
 import modules.EpicTask;
 import modules.SubTask;
-import services.Managers;
+import services.FileBackedTasksManager;
 import services.Status;
-import services.TaskManager;
+
+import java.io.File;
 
 /**
  * В классе проведены некоторые тесты для ознакомления
@@ -12,7 +13,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = Managers.getDefault();
+         FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
+       // TaskManager taskManager = Managers.getDefault();
 
         //Создаем 1 Эпик с 2 подзадачами
         taskManager.addEpicTask(new EpicTask("Построить дом", "1й этап"));
@@ -32,9 +34,6 @@ public class Main {
         taskManager.addSubTask(new SubTask("Взять деньги в банке", "тыщ 300 должно хватить", 7), taskManager.getEpicTaskById(7));
         taskManager.addSubTask(new SubTask("Ехать в салон за авто", "", 7), taskManager.getEpicTaskById(7));
 
-        //Печатаем списки эпиков, задач и подзадач
-        System.out.println(taskManager.getHistoryManager().getHistory());
-
         //Изменяем статусы созданных объектов и обновляем
         taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", Status.IN_PROGRESS, "Залить плиту 300 мм", 1));
         taskManager.updateSubTask(new SubTask(5, "Заказать окна", Status.DONE, "Стеклопакеты", 4));
@@ -49,6 +48,7 @@ public class Main {
         taskManager.getSubTaskById(8);
         taskManager.getSubTaskById(2);
         taskManager.getEpicTaskById(1);
+        taskManager.getEpicTaskById(6);
         taskManager.getEpicTaskById(7);
         taskManager.getEpicTaskById(4);
         taskManager.getEpicTaskById(1);
@@ -67,5 +67,13 @@ public class Main {
         for (int i = 0; i < taskManager.getHistoryManager().getHistory().size(); i++) {
             System.out.println(i + 1 + ". " + taskManager.getHistoryManager().getHistory().get(i));
         }
+
+        //восстанавливаем данные менеджера из файла при запуске программы
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("./data/history1.csv"));
+        System.out.println("Печатаем Историю просмотров FileBackedTasksManager после загрузки из файла: ");
+        for (int i = 0; i < fileBackedTasksManager.getHistoryManager().getHistory().size(); i++) {
+            System.out.println(i + 1 + ". " + fileBackedTasksManager.getHistoryManager().getHistory().get(i));
+        }
     }
 }
+
