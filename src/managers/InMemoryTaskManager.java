@@ -21,13 +21,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private final Comparator<Task> comparator = (o1, o2) -> {
-        if (o1.getStartTime() == null){
-            return -1;
-        } else if (o2.getStartTime() == null) {
-            return 1;
-        } else if (o1.getStartTime() == null && o2.getStartTime() == null)   {
+        if ( o1.equals(o2))   {
             return 0;
-        }    else return (int) (o2.getStartTime().toEpochMilli() -o1.getStartTime().toEpochMilli());
+        } else if (o1.getStartTime() == null){
+            return 1;
+        } else if (o2.getStartTime() == null) {
+            return -1;
+        }     else return (int) (o1.getStartTime().toEpochMilli() - o2.getStartTime().toEpochMilli());
     };
     protected Set<Task> prioritizedTasks = new TreeSet<>(comparator);
     //protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
@@ -142,10 +142,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubTask(SubTask subTask) {
+        SubTask subTask1 =subTaskMap.get(subTask.getId());
         subTaskMap.put(subTask.getId(), subTask);
         updateStatus(subTask.getEpicId());
+        prioritizedTasks.remove(subTask1);
+        addTaskToPrioritizedTasks(subTask);
 
-//        Set<Task> prioritizedTasksTemp = new TreeSet<>(comparator.reversed());
+        updateEpicTime(getEpicTaskById(subTask.getEpicId()));
+    }
+
+    //        Set<Task> prioritizedTasksTemp = new TreeSet<>(comparator.reversed());
 //
 //        for (Task task : prioritizedTasks) {
 //            if (subTask.getId() != task.getId()){
@@ -153,14 +159,6 @@ public class InMemoryTaskManager implements TaskManager {
 //            }
 //        }
 //        prioritizedTasks = prioritizedTasksTemp;
-
-        prioritizedTasks.remove(subTask);
-        addTaskToPrioritizedTasks(subTask);
-
-        updateEpicTime(getEpicTaskById(subTask.getEpicId()));
-    }
-
-
     @Override
     public void removeByIdTask(int id) {
         if (!taskMap.containsKey(id)) {
