@@ -145,14 +145,16 @@ public class InMemoryTaskManager implements TaskManager {
         subTaskMap.put(subTask.getId(), subTask);
         updateStatus(subTask.getEpicId());
 
-        Set<Task> prioritizedTasksTemp = new TreeSet<>(comparator.reversed());
+//        Set<Task> prioritizedTasksTemp = new TreeSet<>(comparator.reversed());
+//
+//        for (Task task : prioritizedTasks) {
+//            if (subTask.getId() != task.getId()){
+//               prioritizedTasksTemp.add(task);
+//            }
+//        }
+//        prioritizedTasks = prioritizedTasksTemp;
 
-        for (Task task : prioritizedTasks) {
-            if (subTask.getId() != task.getId()){
-               prioritizedTasksTemp.add(task);
-            }
-        }
-        prioritizedTasks = prioritizedTasksTemp;
+        prioritizedTasks.remove(subTask);
         addTaskToPrioritizedTasks(subTask);
 
         updateEpicTime(getEpicTaskById(subTask.getEpicId()));
