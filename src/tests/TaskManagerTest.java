@@ -19,11 +19,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     protected SubTask subTaskCreate(EpicTask epicTask) {
-        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 0 ,epicTask.getId());
+        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 200 ,epicTask.getId());
     }
 
     protected Task taskCreate() {
-        return new Task("Купить хлеб", "1 батон", Instant.now(), 0);
+        return new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 1000);
     }
 
 
@@ -154,5 +154,26 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.removeByIdSubTask(subTaskId);
         final List<SubTask> list = taskManager.getListSubTask();
         Assertions.assertEquals(0, list.size(), "Задача subTask не удалена");
+    }
+
+    @Test
+    public void shouldWhenAddTaskOnTime(){
+        final Task task = taskCreate();
+        taskManager.addTask(task);
+        final EpicTask epicTask = epicTaskCreate();
+        taskManager.addEpicTask(epicTask);
+        final SubTask subTask = subTaskCreate(epicTask);
+        taskManager.addSubTask(subTask, epicTask);
+        final SubTask subTask1 = subTaskCreate(epicTask);
+        taskManager.addSubTask(subTask1, epicTask);
+
+        Assertions.assertNotNull(task.getStartTime(),"Время не установлено");
+        Assertions.assertNotNull(epicTask.getStartTime(),"Время не установлено");
+        Assertions.assertNotNull(subTask.getStartTime(), "Время не установлено");
+
+        Assertions.assertEquals(task.getStartTime().plusSeconds(task.getDuration()), task.getEndTime());
+        Assertions.assertEquals(subTask.getStartTime().plusSeconds(subTask.getDuration()), subTask.getEndTime());
+        Assertions.assertEquals(subTask.getEndTime().plusSeconds(
+                subTask1.getDuration()), epicTask.getEndTime());
     }
 }

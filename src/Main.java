@@ -1,6 +1,7 @@
 import managers.FileBackedTasksManager;
 import modules.EpicTask;
 import modules.SubTask;
+import modules.Task;
 import services.Status;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
 
         FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
-         //TaskManager taskManager = Managers.getDefault();
+        // TaskManager taskManager = Managers.getDefault();
 
         //Создаем 1 Эпик с 2 подзадачами
         taskManager.addEpicTask(new EpicTask("Имя 1 большой задачи", "Описание  1 большой задачи"));
@@ -35,9 +36,10 @@ public class Main {
         taskManager.addSubTask(new SubTask("Имя 2 подзадачи 4бол. задачи", "Описание  2 подзадачи 4бол. задачи", Instant.now(), 100, 7), taskManager.getEpicTaskById(7));
         taskManager.addSubTask(new SubTask("Имя 3 подзадачи 4бол. задачи", "", Instant.now(), 0, 7), taskManager.getEpicTaskById(7));
 
+        taskManager.addTask(new Task("Имя 5 ПРОСТОЙ задачи", ""));
         //Изменяем статусы созданных объектов и обновляем
-        taskManager.updateSubTask(new SubTask(2, "Обновляем подзадачу с ID 2", Status.IN_PROGRESS, "Описание подзадачи с статусом IN_PROGRESS", Instant.now(), 0, 1));
-        taskManager.updateSubTask(new SubTask(5, "Обновляем подзадачу с ID 5", Status.DONE, "Описание подзадачи с статусом Status.DONE", 4));
+        taskManager.updateSubTask(new SubTask(2, "Имя 1 подзадачи 1бол. задачи", Status.IN_PROGRESS, "Описание 1 подзадачи 1бол. задачи", Instant.now(), 0, 1));
+        taskManager.updateSubTask(new SubTask(5, "Имя 1 подзадачи 2бол. задачи", Status.DONE, "Описание подзадачи с статусом Status.DONE", 4));
 
         //запросите созданные задачи несколько раз в разном порядке;
         taskManager.getSubTaskById(10);
@@ -56,6 +58,7 @@ public class Main {
         taskManager.getSubTaskById(2);
         taskManager.getEpicTaskById(1);
         taskManager.getSubTaskById(2);
+        taskManager.getTaskById(11);
 
 
         System.out.println("Печатаем Историю просмотров: ");

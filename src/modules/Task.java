@@ -110,7 +110,7 @@ public class Task {
     }
 
     public Instant getEndTime() {
-        return startTime.plusSeconds(duration * 60);
+        return startTime.plusSeconds(duration );
     }
 
     @Override
@@ -125,11 +125,11 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && typeTask == task.typeTask;
+        return id == task.id && Objects.equals(name, task.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, typeTask);
+        return Objects.hash(name, id);
     }
 }

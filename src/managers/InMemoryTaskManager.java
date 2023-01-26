@@ -20,7 +20,17 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
     private final HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,Comparator.nullsLast(Comparator.naturalOrder())));
+    private final Comparator<Task> comparator = (o1, o2) -> {
+        if (o1.getStartTime() == null){
+            return -1;
+        } else if (o2.getStartTime() == null) {
+            return 1;
+        } else if (o1.getStartTime() == null && o2.getStartTime() == null)   {
+            return 0;
+        }    else return (int) (o2.getStartTime().toEpochMilli() -o1.getStartTime().toEpochMilli());
+    };
+    protected Set<Task> prioritizedTasks = new TreeSet<>(comparator);
+    //protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
 
 
     public HistoryManager getHistoryManager() {
@@ -133,10 +143,18 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         subTaskMap.put(subTask.getId(), subTask);
-        prioritizedTasks.remove(subTask);
-//        SubTask subTask1 = subTaskMap.get(subTask.getId());
-        addTaskToPrioritizedTasks(subTask);
         updateStatus(subTask.getEpicId());
+
+        Set<Task> prioritizedTasksTemp = new TreeSet<>(comparator.reversed());
+
+        for (Task task : prioritizedTasks) {
+            if (subTask.getId() != task.getId()){
+               prioritizedTasksTemp.add(task);
+            }
+        }
+        prioritizedTasks = prioritizedTasksTemp;
+        addTaskToPrioritizedTasks(subTask);
+
         updateEpicTime(getEpicTaskById(subTask.getEpicId()));
     }
 
@@ -248,7 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
 
-            long duration = (endTime.toEpochMilli() - startTime.toEpochMilli());
+            long duration = (endTime.toEpochMilli() - startTime.toEpochMilli())/1000;
             epicTask.setDuration(duration);
             epicTask.setEndTime(endTime);
             epicTask.setStartTime(startTime);
@@ -257,7 +275,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addTaskToPrioritizedTasks(Task task){
-            if (validateTasks(task)) {
+        if (validateTasks(task)) {
                 prioritizedTasks.add(task);
             } else throw new ManagerSaveException("Задача пересекается с другой задачей");
     }
