@@ -59,7 +59,9 @@ public class Task {
         this.status = Status.valueOf(data[3]);
         this.id = Integer.parseInt(data[0]);
         this.typeTask = TypeTask.TASK;
-        this.startTime = Instant.parse(data[5]);
+        if (data[5].equals("") || data[5].equals("null")) {
+            this.startTime = null;
+        } else this.startTime = Instant.parse(data[5]);
         this.duration = Long.parseLong(data[6]);
     }
 
@@ -123,11 +125,11 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && duration == task.duration && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && typeTask == task.typeTask && Objects.equals(startTime, task.startTime);
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && typeTask == task.typeTask;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status, typeTask, startTime, duration);
+        return Objects.hash(name, description, id, typeTask);
     }
 }

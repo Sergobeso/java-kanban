@@ -118,6 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+
         taskMap.put(task.getId(), task);
         addTaskToPrioritizedTasks(task);
     }
@@ -130,8 +131,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubTask(SubTask subTask) {
-        addTaskToPrioritizedTasks(subTask);
         subTaskMap.put(subTask.getId(), subTask);
+        prioritizedTasks.remove(subTask);
+//        SubTask subTask1 = subTaskMap.get(subTask.getId());
+        addTaskToPrioritizedTasks(subTask);
         updateStatus(subTask.getEpicId());
         updateEpicTime(getEpicTaskById(subTask.getEpicId()));
     }
@@ -262,7 +265,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void validateTasks(Task task){
-        List<Task> list = List.copyOf(prioritizedTasks);
+        List<Task> list = List.copyOf(getPrioritizedTasks());
         for (int i = 1; i < list.size(); i++){
             Task taskSave = list.get(i);
 
@@ -276,20 +279,4 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
-//    public boolean checkTime(Task task) {
-//        List<Task> list = List.copyOf(prioritizedTasks);
-//
-//        for (Task taskCheck : list) {
-//
-//            if (task.getStartTime() != null && taskCheck.getStartTime() != null) {
-//                if (task.getStartTime().isBefore(taskCheck.getStartTime())
-//                        && task.getEndTime().isBefore(taskCheck.getStartTime())) {
-//                    return true;
-//                } else if (task.getStartTime().isAfter(taskCheck.getEndTime()) && task.getEndTime().isAfter(taskCheck.getEndTime())) {
-//                    return true;
-//                }
-//            }
-//        }
-//    }
 }

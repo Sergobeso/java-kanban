@@ -18,26 +18,26 @@ public class Main {
          //TaskManager taskManager = Managers.getDefault();
 
         //Создаем 1 Эпик с 2 подзадачами
-        taskManager.addEpicTask(new EpicTask("Построить дом", "1й этап"));
-        taskManager.addSubTask(new SubTask("Сделать фундамент", "Залить плиту 300 мм", 1), taskManager.getEpicTaskById(1));
-        taskManager.addSubTask(new SubTask("Построить стены", "Газобетон 375 мм", 1), taskManager.getEpicTaskById(1));
+        taskManager.addEpicTask(new EpicTask("Имя 1 большой задачи", "Описание  1 большой задачи"));
+        taskManager.addSubTask(new SubTask("Имя 1 подзадачи 1бол. задачи", "Описание  1 подзадачи 1бол. задачи", 1), taskManager.getEpicTaskById(1));
+        taskManager.addSubTask(new SubTask("Имя 2 подзадачи 1бол. задачи", "Описание  2 подзадачи 1бол. задачи", 1), taskManager.getEpicTaskById(1));
 
         // Создаем 2й эпик с 1 подзадачей
-        taskManager.addEpicTask(new EpicTask("Доделать дом", "2й этап"));
-        taskManager.addSubTask(new SubTask("Заказать окна", "Стеклопакеты", Instant.now(), 0, 4), taskManager.getEpicTaskById(4));
+        taskManager.addEpicTask(new EpicTask("Имя 2 большой задачи", "Описание  2 большой задачи"));
+        taskManager.addSubTask(new SubTask("Имя 1 подзадачи 2бол. задачи", "Описание  1 подзадачи 2бол. задачи", Instant.now(), 1000, 4), taskManager.getEpicTaskById(4));
 
         // Создаем 3й эпик без подзадач
-        taskManager.addEpicTask(new EpicTask("Купить квартиру", ""));
+        taskManager.addEpicTask(new EpicTask("Имя 3 большой задачи без подзадач", ""));
 
         // Создаем 4й эпик без подзадач
-        taskManager.addEpicTask(new EpicTask("Купить автомобиль", ""));
-        taskManager.addSubTask(new SubTask("Продать старый автомобиль", "За Много денег", 7), taskManager.getEpicTaskById(7));
-        taskManager.addSubTask(new SubTask("Взять деньги в банке", "тыщ 300 должно хватить", 7), taskManager.getEpicTaskById(7));
-        taskManager.addSubTask(new SubTask("Ехать в салон за авто", "", 7), taskManager.getEpicTaskById(7));
+        taskManager.addEpicTask(new EpicTask("Имя 4 большой задачи", ""));
+        taskManager.addSubTask(new SubTask("Имя 1 подзадачи 4бол. задачи", "Описание  1 подзадачи 4бол. задачи", 7), taskManager.getEpicTaskById(7));
+        taskManager.addSubTask(new SubTask("Имя 2 подзадачи 4бол. задачи", "Описание  2 подзадачи 4бол. задачи", Instant.now(), 100, 7), taskManager.getEpicTaskById(7));
+        taskManager.addSubTask(new SubTask("Имя 3 подзадачи 4бол. задачи", "", Instant.now(), 0, 7), taskManager.getEpicTaskById(7));
 
         //Изменяем статусы созданных объектов и обновляем
-        taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", Status.IN_PROGRESS, "Залить плиту 300 мм", Instant.now(), 0, 1));
-        taskManager.updateSubTask(new SubTask(5, "Заказать окна", Status.DONE, "Стеклопакеты", 4));
+        taskManager.updateSubTask(new SubTask(2, "Обновляем подзадачу с ID 2", Status.IN_PROGRESS, "Описание подзадачи с статусом IN_PROGRESS", Instant.now(), 0, 1));
+        taskManager.updateSubTask(new SubTask(5, "Обновляем подзадачу с ID 5", Status.DONE, "Описание подзадачи с статусом Status.DONE", 4));
 
         //запросите созданные задачи несколько раз в разном порядке;
         taskManager.getSubTaskById(10);
