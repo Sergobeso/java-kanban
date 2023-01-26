@@ -59,9 +59,7 @@ public class Task {
         this.status = Status.valueOf(data[3]);
         this.id = Integer.parseInt(data[0]);
         this.typeTask = TypeTask.TASK;
-        if (data[5] == null){
-            this.startTime = Instant.parse(data[5]);
-        } else this.startTime = null;
+        this.startTime = Instant.parse(data[5]);
         this.duration = Long.parseLong(data[6]);
     }
 

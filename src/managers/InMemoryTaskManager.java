@@ -233,11 +233,14 @@ public class InMemoryTaskManager implements TaskManager {
             Instant endTime = subTaskList.get(0).getEndTime();
 
             for (SubTask subTask : subTaskList) {
+                if (subTask.getStartTime() != null){
+
                 if (subTask.getStartTime().isBefore(startTime)) {
                     startTime = subTask.getStartTime();
                 }
                 if (subTask.getEndTime().isAfter(endTime)) {
                     endTime = subTask.getEndTime();
+                }
                 }
             }
 
@@ -259,18 +262,34 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void validateTasks(Task task){
-        List<Task> list = getPrioritizedTasks();
-        for (int i = 0; i < list.size(); i++){
+        List<Task> list = List.copyOf(prioritizedTasks);
+        for (int i = 1; i < list.size(); i++){
             Task taskSave = list.get(i);
 
             if (task.getStartTime() != null && taskSave.getStartTime() != null){
                 if (task.getStartTime().isBefore(taskSave.getStartTime())
-                        && task.getEndTime().isBefore(taskSave.getEndTime())){
-                    break;
-                } else if (task.getStartTime().isAfter(taskSave.getEndTime())) {
-                    break;
-                } else throw new ManagerSaveException("Задача пересекается с другой задачей");
+                        && task.getEndTime().isBefore(taskSave.getStartTime())){
+                    throw new ManagerSaveException("Задача пересекается с другой задачей");
+                } else if (task.getStartTime().isAfter(taskSave.getEndTime()) &&task.getEndTime().isAfter(taskSave.getEndTime())) {
+                    throw new ManagerSaveException("Задача пересекается с другой задачей");
+                }
             }
         }
     }
+
+//    public boolean checkTime(Task task) {
+//        List<Task> list = List.copyOf(prioritizedTasks);
+//
+//        for (Task taskCheck : list) {
+//
+//            if (task.getStartTime() != null && taskCheck.getStartTime() != null) {
+//                if (task.getStartTime().isBefore(taskCheck.getStartTime())
+//                        && task.getEndTime().isBefore(taskCheck.getStartTime())) {
+//                    return true;
+//                } else if (task.getStartTime().isAfter(taskCheck.getEndTime()) && task.getEndTime().isAfter(taskCheck.getEndTime())) {
+//                    return true;
+//                }
+//            }
+//        }
+//    }
 }

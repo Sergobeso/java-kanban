@@ -8,7 +8,7 @@ import java.time.Instant;
 
 /**
  * В классе проведены некоторые тесты для ознакомления
- */**********************
+ */
 
 public class Main {
 
@@ -36,7 +36,7 @@ public class Main {
         taskManager.addSubTask(new SubTask("Ехать в салон за авто", "", 7), taskManager.getEpicTaskById(7));
 
         //Изменяем статусы созданных объектов и обновляем
-        taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", Status.IN_PROGRESS, "Залить плиту 300 мм", 1));
+        taskManager.updateSubTask(new SubTask(2, "Сделать фундамент", Status.IN_PROGRESS, "Залить плиту 300 мм", Instant.now(), 0, 1));
         taskManager.updateSubTask(new SubTask(5, "Заказать окна", Status.DONE, "Стеклопакеты", 4));
 
         //запросите созданные задачи несколько раз в разном порядке;
