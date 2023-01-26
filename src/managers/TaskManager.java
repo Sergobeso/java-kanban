@@ -5,6 +5,7 @@ import modules.SubTask;
 import modules.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** Интерфейс описывающий взаимодействие с задачами
 * Имеет следующую функциональность:
@@ -51,5 +52,5 @@ public interface TaskManager {
 
     // Получение списка всех подзадач определённого эпика.
     ArrayList<SubTask> getListSubTask(EpicTask epicTask);
-
+     List<Task> getPrioritizedTasks();
 }

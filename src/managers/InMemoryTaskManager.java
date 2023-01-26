@@ -59,9 +59,9 @@ public class InMemoryTaskManager implements TaskManager {
         id++;
         subTask.setId(id);
         subTaskMap.put(subTask.getId(), subTask);
+        addTaskToPrioritizedTasks(subTask);
         epicTask.addIdSubTask(id);
         updateEpicTime(epicTask);
-        addTaskToPrioritizedTasks(subTask);
     }
 
 
@@ -120,6 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
 
         taskMap.put(task.getId(), task);
+        prioritizedTasks.remove(task);
         addTaskToPrioritizedTasks(task);
     }
 
@@ -145,6 +146,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!taskMap.containsKey(id)) {
             return;
         }
+        prioritizedTasks.remove(getTaskById(id));
         taskMap.remove(id);
         historyManager.remove(id);
     }
@@ -157,6 +159,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer val : epicTaskMap.get(id).getListSubTaskId()) {
             removeByIdSubTask(val);
         }
+        prioritizedTasks.remove(getEpicTaskById(id));
         epicTaskMap.remove(id);
         historyManager.remove(id);
     }
@@ -166,9 +169,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subTaskMap.containsKey(id)) {
             return;
         }
-        EpicTask epicTask = getEpicTaskById(getSubTaskById(id).getEpicId());
-      //  epicTask.getListSubTaskId().remove((Integer) id);
-      //  updateStatus(epicTask.getId());
+        prioritizedTasks.remove(getSubTaskById(id));
         updateEpicTime(getEpicTaskById(getSubTaskById(id).getEpicId()));
         subTaskMap.remove(id);
         historyManager.remove(id);
@@ -256,27 +257,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addTaskToPrioritizedTasks(Task task){
-            prioritizedTasks.add(task);
-            validateTasks(task);
+            if (validateTasks(task)) {
+                prioritizedTasks.add(task);
+            } else throw new ManagerSaveException("Задача пересекается с другой задачей");
     }
 
-    private List<Task> getPrioritizedTasks(){
+    public List<Task> getPrioritizedTasks(){
         return new ArrayList<>(prioritizedTasks);
     }
 
-    private void validateTasks(Task task){
-        List<Task> list = List.copyOf(getPrioritizedTasks());
+    private boolean validateTasks(Task task){
+        List<Task> list = getPrioritizedTasks();
         for (int i = 1; i < list.size(); i++){
             Task taskSave = list.get(i);
 
             if (task.getStartTime() != null && taskSave.getStartTime() != null){
-                if (task.getStartTime().isBefore(taskSave.getStartTime())
-                        && task.getEndTime().isBefore(taskSave.getStartTime())){
-                    throw new ManagerSaveException("Задача пересекается с другой задачей");
-                } else if (task.getStartTime().isAfter(taskSave.getEndTime()) &&task.getEndTime().isAfter(taskSave.getEndTime())) {
-                    throw new ManagerSaveException("Задача пересекается с другой задачей");
-                }
-            }
+                if (task.getEndTime().isBefore(taskSave.getStartTime())
+                        || task.getStartTime().isAfter(taskSave.getStartTime())){
+                   return true;
+                } else return false;
+            } else return true;
         }
+        return true;
     }
 }

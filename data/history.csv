@@ -1,0 +1,5 @@
+id,type,name,status,description,startTime,duration,epic
+1,EPICTASK,Имя 1 большой задачи,NEW,Описание  1 большой задачи,null,0
+2,SUBTASK,Имя 1 подзадачи 1бол. задачи,NEW,Описание  1 подзадачи 1бол. задачи,null,0,1
+
+1
