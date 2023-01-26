@@ -1,8 +1,9 @@
-package services;
+package managers;
 
 import modules.EpicTask;
 import modules.SubTask;
 import modules.Task;
+import services.TypeTask;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -42,7 +43,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void save() {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file))) {
 
-            fileWriter.write("id,type,name,status,description,epic");
+            fileWriter.write("id,type,name,status,description,startTime,duration,epic");
             fileWriter.newLine();
 
             for (Map.Entry<Integer, Task> item : getTaskMap().entrySet()) {
@@ -68,7 +69,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // метод создания задачи из строки
     public static Task fromString(String value) {
-        String[] data = value.split(",", 6);
+        String[] data = value.split(",", 8);
         TypeTask type = TypeTask.valueOf(data[1]);
 
         switch (type) {
@@ -110,11 +111,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager fbtm = new FileBackedTasksManager(file1);
         try (BufferedReader br = new BufferedReader(new FileReader(file1))) {
 
+            boolean flagIsEmpty = true;
             br.readLine();
             while (br.ready()) {
                 String line = br.readLine();
                 if (!line.isBlank()) {
 
+                    flagIsEmpty = false;
                     Task tasks = fromString(line);
 
                     if (tasks.getTypeTask() == TypeTask.EPICTASK) {
@@ -127,6 +130,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
                 } else {
+                    if (flagIsEmpty){
+                        return fbtm;
+                    }
+
                     String lineNext = br.readLine();
                     List<Integer> list = historyFromString(lineNext);
 

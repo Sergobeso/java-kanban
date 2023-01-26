@@ -1,4 +1,4 @@
-package services;
+package managers;
 
 /**
  * Утилитарный класс, овечает за создание менеджера задач

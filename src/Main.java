@@ -1,9 +1,10 @@
+import managers.FileBackedTasksManager;
 import modules.EpicTask;
 import modules.SubTask;
-import services.FileBackedTasksManager;
 import services.Status;
 
 import java.io.File;
+import java.time.Instant;
 
 /**
  * В классе проведены некоторые тесты для ознакомления
@@ -13,8 +14,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-         FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
-       // TaskManager taskManager = Managers.getDefault();
+        FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
+         //TaskManager taskManager = Managers.getDefault();
 
         //Создаем 1 Эпик с 2 подзадачами
         taskManager.addEpicTask(new EpicTask("Построить дом", "1й этап"));
@@ -23,7 +24,7 @@ public class Main {
 
         // Создаем 2й эпик с 1 подзадачей
         taskManager.addEpicTask(new EpicTask("Доделать дом", "2й этап"));
-        taskManager.addSubTask(new SubTask("Заказать окна", "Стеклопакеты", 4), taskManager.getEpicTaskById(4));
+        taskManager.addSubTask(new SubTask("Заказать окна", "Стеклопакеты", Instant.now(), 0, 4), taskManager.getEpicTaskById(4));
 
         // Создаем 3й эпик без подзадач
         taskManager.addEpicTask(new EpicTask("Купить квартиру", ""));
@@ -69,7 +70,7 @@ public class Main {
         }
 
         //восстанавливаем данные менеджера из файла при запуске программы
-        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("./data/history1.csv"));
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("./data/history.csv"));
         System.out.println("Печатаем Историю просмотров FileBackedTasksManager после загрузки из файла: ");
         for (int i = 0; i < fileBackedTasksManager.getHistoryManager().getHistory().size(); i++) {
             System.out.println(i + 1 + ". " + fileBackedTasksManager.getHistoryManager().getHistory().get(i));

@@ -1,4 +1,4 @@
-package services;
+package managers;
 
 import modules.EpicTask;
 import modules.SubTask;

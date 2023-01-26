@@ -1,4 +1,4 @@
-package services;
+package managers;
 
 public class ManagerSaveException extends RuntimeException{
     private String message;
