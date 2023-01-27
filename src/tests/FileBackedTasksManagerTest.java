@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-;
+/**
+ * Класс описывающий реализацию ТЕСТОВ менеджера FileBackedTasksManager.
+ */
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
