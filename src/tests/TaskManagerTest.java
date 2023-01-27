@@ -1,5 +1,6 @@
 package tests;
 
+import managers.ManagerSaveException;
 import managers.TaskManager;
 import modules.EpicTask;
 import modules.SubTask;
@@ -11,6 +12,9 @@ import services.Status;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Класс описывающий реализацию ТЕСТОВ менеджера InMemoryTaskManager и FileBackedTasksManager.
+ */
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
 
@@ -19,11 +23,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     protected SubTask subTaskCreate(EpicTask epicTask) {
-        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 200 ,epicTask.getId());
+        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 180 ,epicTask.getId());
     }
 
     protected Task taskCreate() {
-        return new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 1000);
+        return new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now().plusSeconds(500), 1000);
     }
 
 
@@ -98,7 +102,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(Status.NEW, epicTask.getStatus(), "Статусы не совпадают при пустом списке подзадач.");
 
         final SubTask subTask1 = subTaskCreate(epicTask);
-        final SubTask subTask2 = subTaskCreate(epicTask);
+        final SubTask subTask2 = new SubTask("Название подзадачи", "Описание подзадачи", Instant.now().plusSeconds(200), 180 ,epicTask.getId());;
 
         // Все подзадачи со статусом NEW.
         taskManager.addSubTask(subTask1, epicTask);
@@ -174,6 +178,70 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(task.getStartTime().plusSeconds(task.getDuration()), task.getEndTime());
         Assertions.assertEquals(subTask.getStartTime().plusSeconds(subTask.getDuration()), subTask.getEndTime());
         Assertions.assertEquals(subTask.getEndTime().plusSeconds(
-                subTask1.getDuration()), epicTask.getEndTime());
+                subTask1.getDuration()), epicTask.getEndTime(),
+                "Неправильно посчитана продолжительность времени Epic");
     }
+    @Test
+    public void shouldTasksInPrioritizedList(){
+        final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 0);
+        taskManager.addTask(task);
+        final EpicTask epicTask = epicTaskCreate();
+        taskManager.addEpicTask(epicTask);
+        final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", Instant.now().plusSeconds(200), 0 ,epicTask.getId());
+        taskManager.addSubTask(subTask, epicTask);
+        final SubTask subTask1 = new SubTask("Название подзадачи 2", "Описание подзадачи 2", Instant.now().plusSeconds(400), 0 ,epicTask.getId());
+        taskManager.addSubTask(subTask1, epicTask);
+
+        Assertions.assertEquals(taskManager.getListTask().size() + taskManager.getListSubTask().size(),
+                taskManager.getPrioritizedTasks().size(), "Задача не попадает в отсортированный список");
+
+    }
+
+    @Test
+    public void shouldTasksInPrioritizedListWhenStartTimeNull(){
+        final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", null, 0);
+        taskManager.addTask(task);
+        final EpicTask epicTask = epicTaskCreate();
+        taskManager.addEpicTask(epicTask);
+        final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", null, 0 ,epicTask.getId());
+        taskManager.addSubTask(subTask, epicTask);
+        final SubTask subTask1 = new SubTask("Название подзадачи 2", "Описание подзадачи 2", null, 0 ,epicTask.getId());
+        taskManager.addSubTask(subTask1, epicTask);
+
+        Assertions.assertEquals(taskManager.getListTask().size() + taskManager.getListSubTask().size(),
+                taskManager.getPrioritizedTasks().size(), "Задача не попадает в отсортированный список");
+
+    }
+
+    @Test
+    public void shouldTasksInPrioritizedListWhenStartTimeNullAndNotNull(){
+        final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", null, 0);
+        taskManager.addTask(task);
+        final EpicTask epicTask = epicTaskCreate();
+        taskManager.addEpicTask(epicTask);
+        final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", Instant.now(), 0 ,epicTask.getId());
+        taskManager.addSubTask(subTask, epicTask);
+        final SubTask subTask1 = new SubTask("Название подзадачи 2", "Описание подзадачи 2", null, 0 ,epicTask.getId());
+        taskManager.addSubTask(subTask1, epicTask);
+
+        Assertions.assertEquals(taskManager.getListTask().size() + taskManager.getListSubTask().size(),
+                taskManager.getPrioritizedTasks().size(), "Задача не попадает в отсортированный список");
+    }
+
+    @Test
+    public void shouldWhenIntersectionTasks(){
+        try {
+            final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 3000);
+            taskManager.addTask(task);
+            final EpicTask epicTask = epicTaskCreate();
+            taskManager.addEpicTask(epicTask);
+            final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", Instant.now(), 0, epicTask.getId());
+            taskManager.addSubTask(subTask, epicTask);
+            final SubTask subTask1 = new SubTask("Название подзадачи 2", "Описание подзадачи 2", Instant.now(), 0, epicTask.getId());
+            taskManager.addSubTask(subTask1, epicTask);
+        } catch (ManagerSaveException e) {
+            Assertions.assertEquals("Задача пересекается с другой задачей" , e.getMessage(), "При пересечении не возникает ошибок");
+        }
+    }
+
 }
