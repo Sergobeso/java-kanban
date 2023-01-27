@@ -13,6 +13,10 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Класс описывающий реализацию ТЕСТОВ менеджера HistoryManager.
+ */
+
 public class HistoryManagerTest {
     private HistoryManager historyManager;
     private TaskManager taskManager;
@@ -22,11 +26,11 @@ public class HistoryManagerTest {
     }
 
     protected SubTask subTaskCreate(EpicTask epicTask) {
-        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 0 ,epicTask.getId());
+        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 100 ,epicTask.getId());
     }
 
     protected Task taskCreate() {
-        return new Task("Купить хлеб", "1 батон", Instant.now(), 0);
+        return new Task("Купить хлеб", "1 батон", Instant.now().plusSeconds(110), 0);
     }
 
     @BeforeEach
