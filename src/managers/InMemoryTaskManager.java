@@ -27,7 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
             return 1;
         } else if (o2.getStartTime() == null) {
             return -1;
-        }     else return (int) (o1.getStartTime().toEpochMilli() - o2.getStartTime().toEpochMilli());
+        }     else return o1.getStartTime().compareTo(o2.getStartTime());
     };
     protected Set<Task> prioritizedTasks = new TreeSet<>(comparator);
     //protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
@@ -128,9 +128,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-
+        Task task1 =taskMap.get(task.getId());
         taskMap.put(task.getId(), task);
-        prioritizedTasks.remove(task);
+        prioritizedTasks.remove(task1);
         addTaskToPrioritizedTasks(task);
     }
 
@@ -150,15 +150,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         updateEpicTime(getEpicTaskById(subTask.getEpicId()));
     }
-
-    //        Set<Task> prioritizedTasksTemp = new TreeSet<>(comparator.reversed());
-//
-//        for (Task task : prioritizedTasks) {
-//            if (subTask.getId() != task.getId()){
-//               prioritizedTasksTemp.add(task);
-//            }
-//        }
-//        prioritizedTasks = prioritizedTasksTemp;
     @Override
     public void removeByIdTask(int id) {
         if (!taskMap.containsKey(id)) {
@@ -249,30 +240,24 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpicTime(EpicTask epicTask){
         List<SubTask> subTaskList = getListSubTask(epicTask);
         if (!subTaskList.isEmpty()) {
-
             Instant startTime = subTaskList.get(0).getStartTime();
             if (startTime != null){
-            Instant endTime = subTaskList.get(0).getEndTime();
-
-            for (SubTask subTask : subTaskList) {
-                if (subTask.getStartTime() != null){
-
-                if (subTask.getStartTime().isBefore(startTime)) {
-                    startTime = subTask.getStartTime();
+                long tempDuration = 0;
+                for (SubTask subTask : subTaskList) {
+                    if (subTask.getStartTime() != null){
+                        tempDuration += subTask.getDuration();
+                        if (subTask.getStartTime().isBefore(startTime)) {
+                            startTime = subTask.getStartTime();
+                        }
+                    }
                 }
-                if (subTask.getEndTime().isAfter(endTime)) {
-                    endTime = subTask.getEndTime();
-                }
-                }
+                epicTask.setDuration(tempDuration);
+                epicTask.setEndTime(startTime.plusSeconds(tempDuration));
+                epicTask.setStartTime(startTime);
             }
-
-            long duration = (endTime.toEpochMilli() - startTime.toEpochMilli())/1000;
-            epicTask.setDuration(duration);
-            epicTask.setEndTime(endTime);
-            epicTask.setStartTime(startTime);
-        }
         }
     }
+
 
     private void addTaskToPrioritizedTasks(Task task){
         if (validateTasks(task)) {
@@ -286,16 +271,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     private boolean validateTasks(Task task){
         List<Task> list = getPrioritizedTasks();
-        for (int i = 1; i < list.size(); i++){
-            Task taskSave = list.get(i);
+        boolean isNotIntersection = true;
+        for (int i = 0; i < list.size(); i++){
+            Task taskItem = list.get(i);
+            if (task.equals(taskItem)){continue;}
 
-            if (task.getStartTime() != null && taskSave.getStartTime() != null){
-                if (task.getEndTime().isBefore(taskSave.getStartTime())
-                        || task.getStartTime().isAfter(taskSave.getStartTime())){
-                   return true;
-                } else return false;
-            } else return true;
+            if (task.getStartTime() != null && taskItem.getEndTime() != null){
+                if (task.getEndTime().isBefore(taskItem.getStartTime())
+                        && task.getEndTime().isBefore(taskItem.getStartTime())){
+                   isNotIntersection = true;
+                } else if (task.getStartTime().isAfter(taskItem.getEndTime())
+                && task.getEndTime().isAfter(taskItem.getEndTime())){
+                    isNotIntersection = true;
+                } else isNotIntersection = false;
+            }
         }
-        return true;
+        return isNotIntersection;
     }
 }
