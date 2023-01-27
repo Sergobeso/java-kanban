@@ -110,7 +110,9 @@ public class Task {
     }
 
     public Instant getEndTime() {
-        return startTime.plusSeconds(duration );
+        if (startTime != null){
+        return startTime.plusSeconds(duration);
+        } return null;
     }
 
     @Override
