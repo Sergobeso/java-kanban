@@ -34,7 +34,7 @@ public class Main {
         taskManager.addEpicTask(new EpicTask("Имя 4 большой задачи", ""));
         taskManager.addSubTask(new SubTask("Имя 1 подзадачи 4бол. задачи", "Описание  1 подзадачи 4бол. задачи", 7), taskManager.getEpicTaskById(7));
         taskManager.addSubTask(new SubTask("Имя 2 подзадачи 4бол. задачи", "Описание  2 подзадачи 4бол. задачи", Instant.now(), 100, 7), taskManager.getEpicTaskById(7));
-        taskManager.addSubTask(new SubTask("Имя 3 подзадачи 4бол. задачи", "", Instant.now(), 0, 7), taskManager.getEpicTaskById(7));
+        taskManager.addSubTask(new SubTask("Имя 3 подзадачи 4бол. задачи", "", Instant.now().plusSeconds(100), 0, 7), taskManager.getEpicTaskById(7));
 
         taskManager.addTask(new Task("Имя 5 ПРОСТОЙ задачи", ""));
         //Изменяем статусы созданных объектов и обновляем
