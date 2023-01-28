@@ -110,16 +110,16 @@ public class Task {
     }
 
     public Instant getEndTime() {
-        if (startTime != null){
-        return startTime.plusSeconds(duration);
-        } return null;
+        if (startTime != null) {
+            return startTime.plusSeconds(duration);
+        } else return null;
     }
 
     @Override
     public String toString() {
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm").withZone(ZoneId.systemDefault());
 //        String formatDate = formatter.format(startTime);
-        return String.format("%d,%s,%s,%s,%s," + startTime  + ",%d", id, typeTask, name, status, description, duration);
+        return String.format("%d,%s,%s,%s,%s," + startTime + ",%d", id, typeTask, name, status, description, duration);
     }
 
     @Override
