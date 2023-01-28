@@ -6,9 +6,9 @@ import modules.EpicTask;
 import modules.SubTask;
 import modules.Task;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.Status;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -17,23 +17,19 @@ import java.util.List;
  */
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
+    protected EpicTask epicTask;
+    protected SubTask subTask;
+    protected Task task;
 
-    protected EpicTask epicTaskCreate() {
-        return new EpicTask("Название большой задачи!", "Описание большой задачи", Instant.now(), 0);
+    @BeforeEach
+    protected void taskCreated(){
+        epicTask = new EpicTask(1, "Название большой задачи!", Status.NEW, "Описание большой задачи", Instant.now(), 0);
+        subTask = new SubTask(2, "Название подзадачи", Status.NEW, "Описание подзадачи", Instant.now(), 180 ,1);
+        task = new Task(3, "Название одиночной задачи", Status.NEW, "Описание одиночной задачи", Instant.now().plusSeconds(500), 1000);
     }
-
-    protected SubTask subTaskCreate(EpicTask epicTask) {
-        return new SubTask("Название подзадачи", "Описание подзадачи", Instant.now(), 180 ,epicTask.getId());
-    }
-
-    protected Task taskCreate() {
-        return new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now().plusSeconds(500), 1000);
-    }
-
 
     @Test
     public void shouldAddTask() {
-        final Task task = taskCreate();
         taskManager.addTask(task);
         final int taskId = task.getId();
         final Task savedTask = taskManager.getTaskById(taskId);
@@ -52,7 +48,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldAddEpicTask() {
 
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
         final int epicTaskId = epicTask.getId();
         final EpicTask savedTask = taskManager.getEpicTaskById(epicTaskId);
@@ -71,9 +66,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldAddSubTask() {
 
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
-        final SubTask subTask = subTaskCreate(epicTask);
         taskManager.addSubTask(subTask, epicTask);
 
         final int subTaskId = subTask.getId();
@@ -94,31 +87,28 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldStatusEpic() {
-        final EpicTask epicTask = epicTaskCreate();
-
         taskManager.addEpicTask(epicTask);
 
         // Пустой список подзадач.
         Assertions.assertEquals(Status.NEW, epicTask.getStatus(), "Статусы не совпадают при пустом списке подзадач.");
 
-        final SubTask subTask1 = subTaskCreate(epicTask);
-        final SubTask subTask2 = new SubTask("Название подзадачи", "Описание подзадачи", Instant.now().plusSeconds(200), 180 ,epicTask.getId());;
+        final SubTask subTask2 = new SubTask("Название подзадачи", "Описание подзадачи", Instant.now().plusSeconds(200), 180 ,epicTask.getId());
 
         // Все подзадачи со статусом NEW.
-        taskManager.addSubTask(subTask1, epicTask);
+        taskManager.addSubTask(subTask, epicTask);
         taskManager.addSubTask(subTask2, epicTask);
 
         Assertions.assertEquals(Status.NEW, epicTask.getStatus(), "Статусы не совпадают при подзадачах со статусом NEW.");
 
         // Подзадачи со статусом IN_PROGRESS.
-        subTask1.setStatus(Status.IN_PROGRESS);
-        taskManager.updateSubTask(subTask1);
+        subTask.setStatus(Status.IN_PROGRESS);
+        taskManager.updateSubTask(subTask);
 
         Assertions.assertEquals(Status.IN_PROGRESS, epicTask.getStatus(), "Статусы не совпадают при подзадачах со статусом IN_PROGRESS.");
 
         // Подзадачи со статусами NEW и DONE.
-        subTask1.setStatus(Status.DONE);
-        taskManager.updateSubTask(subTask1);
+        subTask.setStatus(Status.DONE);
+        taskManager.updateSubTask(subTask);
         Assertions.assertEquals(Status.IN_PROGRESS, epicTask.getStatus(), "Статусы не совпадают при подзадачах со статусами NEW и DONE");
 
         // Все подзадачи со статусом DONE
@@ -129,7 +119,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldWhenRemoveTaskById() {
-        final Task task = taskCreate();
         taskManager.addTask(task);
         final int taskId = task.getId();
         taskManager.removeByIdTask(taskId);
@@ -139,7 +128,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldWhenRemoveEpicTaskById() {
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
         final int epicTaskId = epicTask.getId();
         taskManager.removeByIdEpicTask(epicTaskId);
@@ -149,9 +137,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldWhenRemoveSubTaskById() {
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
-        final SubTask subTask = subTaskCreate(epicTask);
         taskManager.addSubTask(subTask, epicTask);
 
         final int subTaskId = subTask.getId();
@@ -162,13 +148,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldWhenAddTaskOnTime(){
-        final Task task = taskCreate();
         taskManager.addTask(task);
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
-        final SubTask subTask = subTaskCreate(epicTask);
         taskManager.addSubTask(subTask, epicTask);
-        final SubTask subTask1 = subTaskCreate(epicTask);
+        final SubTask subTask1 =  new SubTask("Название подзадачи", "Описание подзадачи", Instant.now().plusSeconds(200), 180 ,epicTask.getId());
+
         taskManager.addSubTask(subTask1, epicTask);
 
         Assertions.assertNotNull(task.getStartTime(),"Время не установлено");
@@ -185,7 +169,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldTasksInPrioritizedList(){
         final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 0);
         taskManager.addTask(task);
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
         final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", Instant.now().plusSeconds(200), 0 ,epicTask.getId());
         taskManager.addSubTask(subTask, epicTask);
@@ -201,7 +184,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldTasksInPrioritizedListWhenStartTimeNull(){
         final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", null, 0);
         taskManager.addTask(task);
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
         final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", null, 0 ,epicTask.getId());
         taskManager.addSubTask(subTask, epicTask);
@@ -217,7 +199,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldTasksInPrioritizedListWhenStartTimeNullAndNotNull(){
         final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", null, 0);
         taskManager.addTask(task);
-        final EpicTask epicTask = epicTaskCreate();
         taskManager.addEpicTask(epicTask);
         final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", Instant.now(), 0 ,epicTask.getId());
         taskManager.addSubTask(subTask, epicTask);
@@ -229,19 +210,27 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldWhenIntersectionTasks(){
-        try {
+    public void shouldWhenIntersectionTasks() {
+        Assertions.assertThrows(ManagerSaveException.class, () -> {
             final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 3000);
             taskManager.addTask(task);
-            final EpicTask epicTask = epicTaskCreate();
             taskManager.addEpicTask(epicTask);
             final SubTask subTask = new SubTask("Название подзадачи 1", "Описание подзадачи 1", Instant.now(), 0, epicTask.getId());
             taskManager.addSubTask(subTask, epicTask);
             final SubTask subTask1 = new SubTask("Название подзадачи 2", "Описание подзадачи 2", Instant.now(), 0, epicTask.getId());
             taskManager.addSubTask(subTask1, epicTask);
-        } catch (ManagerSaveException e) {
-            Assertions.assertEquals("Задача пересекается с другой задачей" , e.getMessage(), "При пересечении не возникает ошибок");
-        }
+        });
     }
 
+    @Test
+    public void shouldWhenIntersectionTasksEndList() {
+        Assertions.assertThrows(ManagerSaveException.class, () -> {
+            final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now().plusSeconds(180), 0);
+            taskManager.addTask(task);
+            final Task task2 = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 100);
+            taskManager.addTask(task2);
+            final Task task3 = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 0);
+            taskManager.addTask(task3);
+        });
+    }
 }
