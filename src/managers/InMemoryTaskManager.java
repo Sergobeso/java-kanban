@@ -30,7 +30,10 @@ public class InMemoryTaskManager implements TaskManager {
         }     else return o1.getStartTime().compareTo(o2.getStartTime());
     };
     protected Set<Task> prioritizedTasks = new TreeSet<>(comparator);
-    //protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
+
+//    второй вариант сортировки, компаратор в одну строку
+//    private final Comparator<Task> comparator = Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task :: getId);
+//    protected final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
 
     public HistoryManager getHistoryManager() {
@@ -272,20 +275,21 @@ public class InMemoryTaskManager implements TaskManager {
     private boolean validateTasks(Task task){
         List<Task> list = getPrioritizedTasks();
         boolean isNotIntersection = true;
-        for (int i = 0; i < list.size(); i++){
-            Task taskItem = list.get(i);
-            if (task.equals(taskItem)){continue;}
-
-            if (task.getStartTime() != null && taskItem.getEndTime() != null){
-                if (task.getEndTime().isBefore(taskItem.getStartTime())
-                        && task.getEndTime().isBefore(taskItem.getStartTime())){
-                   isNotIntersection = true;
-                } else if (task.getStartTime().isAfter(taskItem.getEndTime())
-                && task.getEndTime().isAfter(taskItem.getEndTime())){
-                    isNotIntersection = true;
-                } else isNotIntersection = false;
+        for (Task taskItem : list) {
+            if (!task.equals(taskItem)) {
+                if (task.getStartTime() != null && taskItem.getEndTime() != null) {
+                    if (task.getEndTime().isBefore(taskItem.getStartTime())
+                            && task.getEndTime().isBefore(taskItem.getStartTime())) {
+                        isNotIntersection = true;
+                    } else if (task.getStartTime().isAfter(taskItem.getEndTime())
+                            && task.getEndTime().isAfter(taskItem.getEndTime())) {
+                        isNotIntersection = true;
+                    } else {
+                        isNotIntersection = false;
+                        break;
+                    }
+                }
             }
-        }
-        return isNotIntersection;
+        }   return isNotIntersection;
     }
 }
