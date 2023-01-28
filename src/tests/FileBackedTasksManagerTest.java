@@ -2,9 +2,6 @@ package tests;
 
 import managers.FileBackedTasksManager;
 import managers.InMemoryTaskManager;
-import modules.EpicTask;
-import modules.SubTask;
-import modules.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +17,8 @@ import java.nio.file.Files;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
-    private String fileName = "./data/historyTest.csv";
-    private File file = new File(fileName);
+    private final String fileName = "./data/historyTest.csv";
+    private final File file = new File(fileName);
     private FileBackedTasksManager fileBackedTasksManager;
 
 
@@ -42,13 +39,13 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskMana
 
     @Test
     public void shouldSaveAndLoadTask() {
-        Task task = taskCreate();
-        fileBackedTasksManager.addTask(task);
-        EpicTask epicTask = epicTaskCreate();
-        fileBackedTasksManager.addEpicTask(epicTask);
-        SubTask subTask = subTaskCreate(epicTask);
-        fileBackedTasksManager.addSubTask(subTask, epicTask);
+       // Task task = taskCreate();
 
+     //   EpicTask epicTask = epicTaskCreate();
+        fileBackedTasksManager.addEpicTask(epicTask);
+      //  SubTask subTask = subTaskCreate(epicTask);
+        fileBackedTasksManager.addSubTask(subTask, epicTask);
+        fileBackedTasksManager.addTask(task);
         FileBackedTasksManager fileBackedTasksManager2 = FileBackedTasksManager.loadFromFile(file);
 
         Assertions.assertTrue(fileBackedTasksManager2.getListTask().contains(task), "Задача task не была добавлена");
