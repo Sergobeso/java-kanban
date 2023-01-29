@@ -226,13 +226,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldWhenIntersectionTasksEndList() {
-        Assertions.assertThrows(ManagerSaveException.class, () -> {
-            final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now().plusSeconds(180), 0);
-            taskManager.addTask(task);
-            final Task task2 = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 100);
-            taskManager.addTask(task2);
-            final Task task3 = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 0);
-            taskManager.addTask(task3);
-        });
+        final Task task = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now().plusSeconds(180), 0);
+        taskManager.addTask(task);
+        final Task task2 = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 100);
+        taskManager.addTask(task2);
+        final Task task3 = new Task("Название одиночной задачи", "Описание одиночной задачи", Instant.now(), 0);
+        Assertions.assertThrows(ManagerSaveException.class, () -> taskManager.addTask(task3));
     }
 }
