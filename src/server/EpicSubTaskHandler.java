@@ -1,30 +1,23 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
+import modules.EpicTask;
 import services.Endpoint;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-public class TaskHandler implements HttpHandler {
+public class EpicSubTaskHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private TaskManager manager;
     private Gson gson = new Gson();
 
-    public TaskHandler(TaskManager manager) {
+    public EpicSubTaskHandler(TaskManager manager) {
         this.manager = manager;
     }
 
@@ -35,7 +28,8 @@ public class TaskHandler implements HttpHandler {
 
         switch (endpoint) {
             case GET_TASK: {
-                writeResponse(exchange, gson.toJson(manager.getTaskById(getId(parametrs))), 200);
+                EpicTask epicTask = manager.getEpicTaskById(getId(parametrs));
+                writeResponse(exchange, gson.toJson(manager.getListSubEpicTask(epicTask)), 200);
                 break;
             }
             case POST_TASK: {

@@ -75,6 +75,8 @@ public class Main {
         for (int i = 0; i < taskManager.getHistoryManager().getHistory().size(); i++) {
             System.out.println(i + 1 + ". " + taskManager.getHistoryManager().getHistory().get(i));
         }
+        System.out.println("**************************************************************");
+        System.out.println(taskManager.getListSubEpicTask(taskManager.getEpicTaskById(1)));
 
         //восстанавливаем данные менеджера из файла при запуске программы
         FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("./data/history.csv"));

@@ -13,10 +13,6 @@ public class HttpTaskServer {
     public HttpServer httpServer;
     FileBackedTasksManager taskManager;
 
-    public HttpServer getHttpServer() {
-        return httpServer;
-    }
-
     public HttpTaskServer(FileBackedTasksManager taskManager) throws IOException {
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
@@ -24,11 +20,12 @@ public class HttpTaskServer {
        // FileBackedTasksManager taskManager = Managers.getDefaultFBTM();
         this.taskManager = taskManager;
 
-        httpServer.createContext("/tasks", new TaskHandler(taskManager));
+        httpServer.createContext("/tasks", new AllTasksHandler(taskManager));
         httpServer.createContext("/tasks/task", new TaskHandler(taskManager));
-        httpServer.createContext("/tasks/epic", new TaskHandler(taskManager));
-        httpServer.createContext("/tasks/subTask", new TaskHandler(taskManager));
-        httpServer.createContext("/tasks/history", new TaskHandler(taskManager));
+        httpServer.createContext("/tasks/epic", new EpicHandler(taskManager));
+        httpServer.createContext("/tasks/subTask", new SubTaskHandler(taskManager));
+        httpServer.createContext("/tasks/subTask/epic", new EpicSubTaskHandler(taskManager));
+        httpServer.createContext("/tasks/history", new HistoryHandler(taskManager));
     }
 
     public void start(){
