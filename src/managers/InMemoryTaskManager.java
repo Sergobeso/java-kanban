@@ -5,8 +5,10 @@ import modules.SubTask;
 import modules.Task;
 import services.Status;
 
+import java.security.KeyStore;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Класс описывающий реализацию интерфейса TaskManager.
@@ -189,12 +191,25 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public ArrayList<SubTask> getListSubTask(EpicTask epicTask) {
+    public ArrayList<SubTask> getListSubEpicTask(EpicTask epicTask) {
         ArrayList<SubTask> listSubTask = new ArrayList<>();
         for (Integer key : epicTask.getListSubTaskId()) {
             listSubTask.add(subTaskMap.get(key));
         }
         return listSubTask;
+    }
+
+    public List<SubTask> getAllSubTaskEpicId(int id){
+        List<SubTask> list = new ArrayList<>();
+        if (epicTaskMap.containsKey(id)){
+            EpicTask epicTask = epicTaskMap.get(id);
+            for (int item: epicTask.getListSubTaskId()) {
+                if (subTaskMap.containsKey(item)){
+                    list.add(subTaskMap.get(item));
+                }
+            }
+        }
+        return list;
     }
 
 
@@ -241,7 +256,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void updateEpicTime(EpicTask epicTask){
-        List<SubTask> subTaskList = getListSubTask(epicTask);
+
+        List<SubTask> subTaskList = getAllSubTaskEpicId(epicTask.getId());
+
         if (!subTaskList.isEmpty()) {
             Instant startTime = subTaskList.get(0).getStartTime();
             if (startTime != null){

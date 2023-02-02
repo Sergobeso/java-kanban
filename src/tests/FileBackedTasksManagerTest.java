@@ -39,11 +39,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskMana
 
     @Test
     public void shouldSaveAndLoadTask() {
-       // Task task = taskCreate();
-
-     //   EpicTask epicTask = epicTaskCreate();
         fileBackedTasksManager.addEpicTask(epicTask);
-      //  SubTask subTask = subTaskCreate(epicTask);
         fileBackedTasksManager.addSubTask(subTask, epicTask);
         fileBackedTasksManager.addTask(task);
         FileBackedTasksManager fileBackedTasksManager2 = FileBackedTasksManager.loadFromFile(file);

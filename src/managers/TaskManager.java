@@ -51,7 +51,8 @@ public interface TaskManager {
     void removeByIdSubTask(int id);
 
     // Получение списка всех подзадач определённого эпика.
-    ArrayList<SubTask> getListSubTask(EpicTask epicTask);
+    ArrayList<SubTask> getListSubEpicTask(EpicTask epicTask);
+    public List<SubTask> getAllSubTaskEpicId(int id);
 
     List<Task> getPrioritizedTasks();
 }

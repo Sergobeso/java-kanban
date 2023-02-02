@@ -261,7 +261,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public ArrayList<SubTask> getListSubTask(EpicTask epicTask) {
-        return super.getListSubTask();
+    public ArrayList<SubTask> getListSubEpicTask(EpicTask epicTask) {
+        return super.getListSubEpicTask(epicTask);
     }
 }
