@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
+import modules.Task;
 import services.Endpoint;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 
 public class TaskHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -35,7 +37,20 @@ public class TaskHandler implements HttpHandler {
 
         switch (endpoint) {
             case GET_TASK: {
-                writeResponse(exchange, gson.toJson(manager.getTaskById(getId(parametrs))), 200);
+                if (parametrs!=null || !parametrs.isBlank()){
+                    try{
+                        Task task = manager.getTaskById(getId(parametrs));
+                        if (task != null) {
+                            writeResponse(exchange, gson.toJson(task), 200);
+                        } else {
+                            writeResponse(exchange, "Такого ID нет среди задач", 200);
+                        }
+                   } catch (IOException e){
+                        writeResponse(exchange, "Проверьте ID неверный формат", 200);
+                    }
+                } else  {
+                    writeResponse(exchange, gson.toJson(manager.getListTask()), 200);
+                }
                 break;
             }
             case POST_TASK: {
@@ -43,7 +58,13 @@ public class TaskHandler implements HttpHandler {
                 break;
             }
             case DELETE_TASK: {
-                writeResponse(exchange, "Получен запрос на удаление задачи", 200);
+                if (!parametrs.isBlank()){
+                    manager.clearTask();
+                    writeResponse(exchange, "Все задачи Task удалены", 200);
+                } else  {
+                    manager.removeByIdTask(getId(parametrs));
+                    writeResponse(exchange, "Задача с ID: "+ getId(parametrs) + "удалена!", 200);
+                }
                 break;
             }
             default:
@@ -52,12 +73,11 @@ public class TaskHandler implements HttpHandler {
     }
 
     private int getId(String parametrs) {
-        int id = -1;
-
-        if (!parametrs.isBlank()) {
-            id = Integer.parseInt(parametrs.substring(3));
-        }
-        return id;
+       try {
+           return Integer.parseInt(parametrs.substring(3));
+        } catch (NumberFormatException e){
+         throw  new NumberFormatException();
+       }
     }
 
     private Endpoint getEndpoint(String requestMethod) {
