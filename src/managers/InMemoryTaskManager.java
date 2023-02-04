@@ -42,15 +42,15 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager;
     }
 
-    protected HashMap<Integer, Task> getTaskMap() {
+    public HashMap<Integer, Task> getTaskMap() {
         return taskMap;
     }
 
-    protected HashMap<Integer, EpicTask> getEpicTaskMap() {
+    public HashMap<Integer, EpicTask> getEpicTaskMap() {
         return epicTaskMap;
     }
 
-    protected HashMap<Integer, SubTask> getSubTaskMap() {
+    public HashMap<Integer, SubTask> getSubTaskMap() {
         return subTaskMap;
     }
 

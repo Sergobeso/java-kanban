@@ -1,9 +1,6 @@
 package server;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
@@ -11,15 +8,10 @@ import modules.Task;
 import services.Endpoint;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
 
 public class TaskHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -37,16 +29,13 @@ public class TaskHandler implements HttpHandler {
 
         switch (endpoint) {
             case GET_TASK: {
-                if (parametrs!=null || !parametrs.isBlank()){
+                if (parametrs!=null && !parametrs.isBlank()){
                     try{
                         Task task = manager.getTaskById(getId(parametrs));
-                        if (task != null) {
-                            writeResponse(exchange, gson.toJson(task), 200);
-                        } else {
-                            writeResponse(exchange, "Такого ID нет среди задач", 200);
-                        }
-                   } catch (IOException e){
-                        writeResponse(exchange, "Проверьте ID неверный формат", 200);
+                        System.out.println(gson.toJson(task));
+                        writeResponse(exchange, gson.toJson(task), 200);
+                   } catch (IOException | NullPointerException | NumberFormatException e ){
+                        writeResponse(exchange, "Неверный ID", 400);
                     }
                 } else  {
                     writeResponse(exchange, gson.toJson(manager.getListTask()), 200);
@@ -54,16 +43,46 @@ public class TaskHandler implements HttpHandler {
                 break;
             }
             case POST_TASK: {
-                writeResponse(exchange, "Получен запрос на добавление задачи", 200);
-                break;
+                try {
+                    if (parametrs == null || parametrs.isBlank() || !manager.getTaskMap().containsKey(getId(parametrs))) {
+                        try (InputStream body = exchange.getRequestBody()) {
+                            byte[] byteJson = body.readAllBytes();
+                            String stringJson = new String(byteJson, StandardCharsets.UTF_8);
+                            Task task = gson.fromJson(stringJson, Task.class);
+                            manager.addTask(task);
+                            writeResponse(exchange, "Задача успешно добавлена", 200);
+                            break;
+                        } catch (JsonIOException e) {
+                            writeResponse(exchange, "Неверный JSON формат", 400);
+                        }
+                    } else {
+                        try (InputStream body = exchange.getRequestBody()) {
+                            byte[] byteJson = body.readAllBytes();
+                            String stringJson = new String(byteJson, StandardCharsets.UTF_8);
+                            Task task = gson.fromJson(stringJson, Task.class);
+                            manager.updateTask(task);
+                            writeResponse(exchange, "Задача успешно обновлена", 200);
+                            break;
+                        } catch (JsonIOException e) {
+                            writeResponse(exchange, "Неверный JSON формат", 400);
+                        }
+                    }
+                } catch (NumberFormatException e){
+                    writeResponse(exchange, "Неверный формат ID", 400);
+                }
             }
             case DELETE_TASK: {
-                if (!parametrs.isBlank()){
+                if (parametrs==null || parametrs.isBlank()){
                     manager.clearTask();
                     writeResponse(exchange, "Все задачи Task удалены", 200);
                 } else  {
-                    manager.removeByIdTask(getId(parametrs));
-                    writeResponse(exchange, "Задача с ID: "+ getId(parametrs) + "удалена!", 200);
+                    try {
+                        Task task = manager.getTaskById(getId(parametrs));
+                        manager.removeByIdTask(task.getId());
+                        writeResponse(exchange, "Задача с ID: "+ getId(parametrs) + " удалена!", 200);
+                    } catch (IOException | NullPointerException | NumberFormatException e ){
+                        writeResponse(exchange, "Неверный ID", 400);
+                    }
                 }
                 break;
             }

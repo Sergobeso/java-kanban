@@ -5,6 +5,7 @@ import modules.SubTask;
 import modules.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /** Интерфейс описывающий взаимодействие с задачами
@@ -55,4 +56,8 @@ public interface TaskManager {
     public List<SubTask> getAllSubTaskEpicId(int id);
 
     List<Task> getPrioritizedTasks();
+
+    HashMap<Integer, Task> getTaskMap();
+    HashMap<Integer, EpicTask> getEpicTaskMap();
+    HashMap<Integer, SubTask> getSubTaskMap();
 }
