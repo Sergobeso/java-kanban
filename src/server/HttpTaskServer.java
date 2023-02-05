@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import managers.FileBackedTasksManager;
 import managers.Managers;
 import managers.TaskManager;
+import server.handlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,12 +14,12 @@ public class HttpTaskServer {
     public HttpServer httpServer;
     FileBackedTasksManager taskManager;
 
-    public HttpTaskServer(FileBackedTasksManager taskManager) throws IOException {
+    public HttpTaskServer(TaskManager taskManager) throws IOException {
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
 
-       // FileBackedTasksManager taskManager = Managers.getDefaultFBTM();
-        this.taskManager = taskManager;
+       // taskManager = Managers.getDefaultFBTM();
+        this.taskManager = (FileBackedTasksManager) taskManager;
 
         httpServer.createContext("/tasks", new AllTasksHandler(taskManager));
         httpServer.createContext("/tasks/task", new TaskHandler(taskManager));
