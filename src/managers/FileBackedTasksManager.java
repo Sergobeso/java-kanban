@@ -25,6 +25,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private File file;
 
+    public FileBackedTasksManager() {
+
+    }
     public FileBackedTasksManager(File file) {
         this.file = file;
         String fileName = "./data/history.csv";
