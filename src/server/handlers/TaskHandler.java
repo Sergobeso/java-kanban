@@ -1,4 +1,4 @@
-package server;
+package server.handlers;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,9 +14,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class TaskHandler implements HttpHandler {
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private TaskManager manager;
-    private Gson gson = new Gson();
+    protected static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    protected TaskManager manager;
+    protected Gson gson = new Gson();
 
     public TaskHandler(TaskManager manager) {
         this.manager = manager;
@@ -90,7 +90,7 @@ public class TaskHandler implements HttpHandler {
         }
     }
 
-    private int getId(String parametrs) {
+    protected int getId(String parametrs) {
        try {
            return Integer.parseInt(parametrs.substring(3));
         } catch (NumberFormatException e){
@@ -98,7 +98,7 @@ public class TaskHandler implements HttpHandler {
        }
     }
 
-    private Endpoint getEndpoint(String requestMethod) {
+    protected Endpoint getEndpoint(String requestMethod) {
         switch (requestMethod) {
             case "GET":
                 return Endpoint.GET_TASK;
@@ -111,7 +111,7 @@ public class TaskHandler implements HttpHandler {
         }
     }
 
-    private void writeResponse(HttpExchange exchange,
+    protected void writeResponse(HttpExchange exchange,
                                String responseString,
                                int responseCode) throws IOException {
         if (responseString.isBlank()) {
