@@ -2,7 +2,9 @@ import managers.FileBackedTasksManager;
 import modules.EpicTask;
 import modules.SubTask;
 import modules.Task;
+import server.HttpTaskManager;
 import server.HttpTaskServer;
+import server.KVServer;
 import services.Status;
 
 import java.io.File;
@@ -15,10 +17,16 @@ import java.time.Instant;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
-        FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
+        //FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
         // TaskManager taskManager = Managers.getDefault();
+        //HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
+        //httpTaskServer.start();
+
+        KVServer server = new KVServer();
+        server.start();
+        HttpTaskManager taskManager = new HttpTaskManager("http://localhost:", 8078);
         HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
         httpTaskServer.start();
 
