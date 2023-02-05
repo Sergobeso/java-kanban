@@ -32,7 +32,6 @@ public class TaskHandler implements HttpHandler {
                 if (parametrs!=null && !parametrs.isBlank()){
                     try{
                         Task task = manager.getTaskById(getId(parametrs));
-                        System.out.println(gson.toJson(task));
                         writeResponse(exchange, gson.toJson(task), 200);
                    } catch (IOException | NullPointerException | NumberFormatException e ){
                         writeResponse(exchange, "Неверный ID", 400);

@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
 import modules.EpicTask;
+import modules.SubTask;
 import services.Endpoint;
 
 import java.io.IOException;
@@ -23,26 +24,20 @@ public class EpicSubTaskHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        Endpoint endpoint = getEndpoint(exchange.getRequestMethod());
         String parametrs = exchange.getRequestURI().getRawQuery();
 
-        switch (endpoint) {
-            case GET_TASK: {
+        if (parametrs != null && !parametrs.isBlank()) {
+            try {
                 EpicTask epicTask = manager.getEpicTaskById(getId(parametrs));
                 writeResponse(exchange, gson.toJson(manager.getListSubEpicTask(epicTask)), 200);
-                break;
+            } catch (IOException | NullPointerException | NumberFormatException e) {
+                writeResponse(exchange, "Неверный формат ID", 400);
             }
-            case POST_TASK: {
-                writeResponse(exchange, "Получен запрос на добавление задачи", 200);
-                break;
-            }
-            case DELETE_TASK: {
-                writeResponse(exchange, "Получен запрос на удаление задачи", 200);
-                break;
-            }
-            default:
-                writeResponse(exchange, "Такого эндпоинта не существует", 404);
+        } else {
+            writeResponse(exchange, "Вы не предали ID. Список доступных задач: " +
+                    gson.toJson(manager.getListEpicTask()), 400);
         }
+
     }
 
     private int getId(String parametrs) {
@@ -52,19 +47,6 @@ public class EpicSubTaskHandler implements HttpHandler {
             id = Integer.parseInt(parametrs.substring(3));
         }
         return id;
-    }
-
-    private Endpoint getEndpoint(String requestMethod) {
-        switch (requestMethod) {
-            case "GET":
-                return Endpoint.GET_TASK;
-            case "POST":
-                return Endpoint.POST_TASK;
-            case "DELETE":
-                return Endpoint.DELETE_TASK;
-            default:
-                return Endpoint.UNKNOWN;
-        }
     }
 
     private void writeResponse(HttpExchange exchange,
