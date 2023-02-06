@@ -1,14 +1,19 @@
 package tests;
 
+import com.google.gson.Gson;
 import managers.FileBackedTasksManager;
 import managers.InMemoryTaskManager;
 import managers.Managers;
+import modules.EpicTask;
+import modules.SubTask;
+import modules.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskManager;
 import server.KVServer;
+import server.KVTaskClient;
 
 import java.io.IOException;
 /**
@@ -55,6 +60,26 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     public void shouldIsEmptyListHistory() throws IOException, InterruptedException {
         manager.save();
         Assertions.assertTrue(manager.getHistoryManager().getHistory().isEmpty(), "История задач должна быть пустрой");
+    }
+
+    @Test
+    public void shouldSaveAndLoadTask() throws IOException, InterruptedException {
+        KVTaskClient client = new KVTaskClient("http://localhost:");
+        Gson gson = new Gson();
+
+        String jsonObject1 = gson.toJson(task);
+        String jsonObject2 = gson.toJson(epicTask);
+        String jsonObject3 = gson.toJson(subTask);
+
+        client.put("111", jsonObject1);
+        client.put("222", jsonObject2);
+        client.put("333", jsonObject3);
+
+        System.out.println(client.load("111"));
+
+        Assertions.assertEquals(gson.fromJson(client.load("111"), Task.class), task, "Задача task не была добавлена");
+        Assertions.assertEquals(gson.fromJson(client.load("222"), EpicTask.class), epicTask, "Задача subTask не была добавлена");
+        Assertions.assertEquals(gson.fromJson(client.load("333"), SubTask.class),subTask, "Задача epicTask не была добавлена");
     }
 
 }

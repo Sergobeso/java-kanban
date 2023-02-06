@@ -20,7 +20,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         try {
             JsonElement jsonElement = JsonParser.parseString(client.load("task"));
 
-            if (jsonElement.isJsonObject()){
+            if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
                 Task task = gson.fromJson(jsonObject, Task.class);
                 addTask(task);
@@ -28,13 +28,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 JsonArray jsonArray = jsonElement.getAsJsonArray();
                 for (JsonElement jsonElemen : jsonArray) {
                     JsonObject jsonObject = jsonElemen.getAsJsonObject();
-                    Task task =  gson.fromJson(jsonObject, Task.class);
+                    Task task = gson.fromJson(jsonObject, Task.class);
                     addTask(task);
                 }
             }
 
             jsonElement = JsonParser.parseString(client.load("epicTask"));
-            if (jsonElement.isJsonObject()){
+            if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
                 EpicTask task = gson.fromJson(jsonObject, EpicTask.class);
                 addEpicTask(task);
@@ -42,13 +42,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 JsonArray jsonArray = jsonElement.getAsJsonArray();
                 for (JsonElement jsonElemen : jsonArray) {
                     JsonObject jsonObject = jsonElemen.getAsJsonObject();
-                    EpicTask task =  gson.fromJson(jsonObject, EpicTask.class);
+                    EpicTask task = gson.fromJson(jsonObject, EpicTask.class);
                     addEpicTask(task);
                 }
             }
 
             jsonElement = JsonParser.parseString(client.load("subTask"));
-            if (jsonElement.isJsonObject()){
+            if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
                 SubTask subTask = gson.fromJson(jsonObject, SubTask.class);
                 EpicTask epicTask = getEpicTaskById(subTask.getEpicId());
@@ -76,18 +76,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
                         getHistoryManager().add(getSubTaskById(id));
                     }
 
+                }
             }
-    } } catch (IllegalStateException e){
-        }}
+        } catch (IllegalStateException e) {
+        }
+    }
 
     @Override
     public void save() {
         try {
             client.put("task", gson.toJson(getTaskMap().values()));
-            client.put( "epicTask", gson.toJson(getEpicTaskMap().values()));
+            client.put("epicTask", gson.toJson(getEpicTaskMap().values()));
             client.put("subTask", gson.toJson(getSubTaskMap().values()));
             client.put("history", gson.toJson(getHistoryManager().getHistory()));
-        } catch (IOException | InterruptedException e){
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
