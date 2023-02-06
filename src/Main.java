@@ -86,12 +86,12 @@ public class Main {
         System.out.println("**************************************************************");
         System.out.println(taskManager.getListSubEpicTask(taskManager.getEpicTaskById(1)));
 
-        //восстанавливаем данные менеджера из файла при запуске программы
-        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("./data/history.csv"));
-        System.out.println("Печатаем Историю просмотров FileBackedTasksManager после загрузки из файла: ");
-        for (int i = 0; i < fileBackedTasksManager.getHistoryManager().getHistory().size(); i++) {
-            System.out.println(i + 1 + ". " + fileBackedTasksManager.getHistoryManager().getHistory().get(i));
-        }
+//        //восстанавливаем данные менеджера из файла при запуске программы
+//        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("./data/history.csv"));
+//        System.out.println("Печатаем Историю просмотров FileBackedTasksManager после загрузки из файла: ");
+//        for (int i = 0; i < fileBackedTasksManager.getHistoryManager().getHistory().size(); i++) {
+//            System.out.println(i + 1 + ". " + fileBackedTasksManager.getHistoryManager().getHistory().get(i));
+//        }
 
     }
 }
