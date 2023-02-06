@@ -21,12 +21,10 @@ public class Main {
 
         //FileBackedTasksManager taskManager = new FileBackedTasksManager(new File("./data/history.csv"));
         // TaskManager taskManager = Managers.getDefault();
-        //HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
-        //httpTaskServer.start();
 
         KVServer server = new KVServer();
         server.start();
-        HttpTaskManager taskManager = new HttpTaskManager("http://localhost:", 8078);
+        HttpTaskManager taskManager = new HttpTaskManager("http://localhost:");
         HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
         httpTaskServer.start();
 

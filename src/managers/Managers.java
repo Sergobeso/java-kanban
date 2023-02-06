@@ -1,6 +1,9 @@
 package managers;
 
+import server.HttpTaskManager;
+
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Утилитарный класс, овечает за создание менеджера задач
@@ -9,8 +12,12 @@ import java.io.File;
 
 public class Managers {
 
-    public static TaskManager getDefault(){
+    public static TaskManager getDefaultInMemoryTaskManager(){
         return new InMemoryTaskManager();
+    }
+
+    public static HttpTaskManager getDefault() throws IOException, InterruptedException {
+        return new HttpTaskManager("http://localhost:");
     }
     public static FileBackedTasksManager getDefaultFBTM(){
         return new FileBackedTasksManager(new File("./data/historyTest.csv"));

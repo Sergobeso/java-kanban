@@ -14,8 +14,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private final Gson gson = new Gson();
     private final KVTaskClient client;
 
-    public HttpTaskManager(String urlServer, int port) throws IOException, InterruptedException {
-        client = new KVTaskClient(urlServer, port);
+    public HttpTaskManager(String urlServer) throws IOException, InterruptedException {
+        client = new KVTaskClient(urlServer);
 
         try {
             JsonElement jsonElement = JsonParser.parseString(client.load("task"));

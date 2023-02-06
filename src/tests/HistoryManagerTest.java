@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class HistoryManagerTest {
     }
 
     @BeforeEach
-    public void beforeEach(){
-        taskManager = Managers.getDefault();
+    public void beforeEach() {
+        taskManager = Managers.getDefaultInMemoryTaskManager();
         historyManager = taskManager.getHistoryManager();
     }
 

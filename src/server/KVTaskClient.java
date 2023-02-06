@@ -11,7 +11,7 @@ public class KVTaskClient {
     String API_TOKEN;
 
 
-    public KVTaskClient (String url, int port) throws IOException, InterruptedException {
+    public KVTaskClient (String url) throws IOException, InterruptedException {
         this.serverUrl = url;
         URI uri = URI.create(serverUrl + KVServer.PORT + "/register");
 
