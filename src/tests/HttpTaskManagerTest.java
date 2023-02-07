@@ -16,6 +16,7 @@ import server.KVServer;
 import server.KVTaskClient;
 
 import java.io.IOException;
+
 /**
  * Класс описывающий реализацию ТЕСТОВ менеджера HttpTaskManagerTest.
  */
@@ -23,6 +24,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     private KVServer server;
     private HttpTaskManager manager;
+
     @BeforeEach
     public void beforeEach() throws IOException, InterruptedException {
         taskManager = new InMemoryTaskManager();
@@ -42,7 +44,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         manager.addSubTask(subTask, epicTask);
         manager.addTask(task);
 
-        Assertions.assertTrue( manager.getListTask().contains(task), "Задача task не была добавлена");
+        Assertions.assertTrue(manager.getListTask().contains(task), "Задача task не была добавлена");
         Assertions.assertTrue(manager.getListSubTask().contains(subTask), "Задача subTask не была добавлена");
         Assertions.assertTrue(manager.getListEpicTask().contains(epicTask), "Задача epicTask не была добавлена");
     }
@@ -79,9 +81,8 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
         Assertions.assertEquals(gson.fromJson(client.load("111"), Task.class), task, "Задача task не была добавлена");
         Assertions.assertEquals(gson.fromJson(client.load("222"), EpicTask.class), epicTask, "Задача subTask не была добавлена");
-        Assertions.assertEquals(gson.fromJson(client.load("333"), SubTask.class),subTask, "Задача epicTask не была добавлена");
+        Assertions.assertEquals(gson.fromJson(client.load("333"), SubTask.class), subTask, "Задача epicTask не была добавлена");
     }
-
 
 
 }

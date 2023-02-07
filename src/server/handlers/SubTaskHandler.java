@@ -43,7 +43,10 @@ public class SubTaskHandler extends TaskHandler implements HttpHandler {
                             byte[] byteJson = body.readAllBytes();
                             String stringJson = new String(byteJson, StandardCharsets.UTF_8);
                             SubTask subTask = gson.fromJson(stringJson, SubTask.class);
-                            EpicTask epicTask = manager.getEpicTaskById(subTask.getId());
+                            int idEpic = subTask.getEpicId();
+
+
+                            EpicTask epicTask = manager.getEpicTaskById(idEpic);
                             manager.addSubTask(subTask,  epicTask);
                             writeResponse(exchange, "Задача успешно добавлена", 200);
                             break;
@@ -63,7 +66,7 @@ public class SubTaskHandler extends TaskHandler implements HttpHandler {
                         }
                     }
                 } catch (NumberFormatException e) {
-                    writeResponse(exchange, "Неверный формат ID", 400);
+                    writeResponse(exchange, "Не указан ID Эпика или неверный формат", 400);
                 }
             }
             case DELETE_TASK: {

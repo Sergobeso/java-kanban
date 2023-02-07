@@ -12,7 +12,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
+ * В классе реализована логика работы сервера. Генерация ТОКЕНА и хранение данных в памяти, а также сохранение
+ * и загрузка данных.
  */
 public class KVServer {
     public static final int PORT = 8078;
@@ -118,7 +119,7 @@ public class KVServer {
         server.start();
     }
 
-    public void stop(){
+    public void stop() {
         server.stop(1);
         System.out.println("HTTP-сервер остановлен на " + PORT + " порту!");
     }

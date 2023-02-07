@@ -6,12 +6,19 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * В классе реализована логика работы клиента, который регистрируется на сервере и получает уникальный API_TOKEN,
+ * с помощью которого обращается к серверу с данными.
+ * - метод put - сохраняет задачи на сервер по ТОКЕНУ
+ * - метод load - загружает данные с сервера по ТОКЕНУ
+ */
+
 public class KVTaskClient {
     private String serverUrl;
     String API_TOKEN;
 
 
-    public KVTaskClient (String url) throws IOException, InterruptedException {
+    public KVTaskClient(String url) throws IOException, InterruptedException {
         this.serverUrl = url;
         URI uri = URI.create(serverUrl + KVServer.PORT + "/register");
 
@@ -32,7 +39,7 @@ public class KVTaskClient {
 
     }
 
-    public String load (String key) throws IOException, InterruptedException {
+    public String load(String key) throws IOException, InterruptedException {
         URI uri = URI.create(serverUrl + KVServer.PORT + "/load" + key + "?API_TOKEN=" + API_TOKEN);
 
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();

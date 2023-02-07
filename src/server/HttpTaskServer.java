@@ -2,12 +2,16 @@ package server;
 
 import com.sun.net.httpserver.HttpServer;
 import managers.FileBackedTasksManager;
-import managers.Managers;
 import managers.TaskManager;
 import server.handlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+
+/**
+ * В классе реализована логика работы API.
+ * Эндпоинты соответствовуют вызовам базовых методов интерфейса TaskManager.
+ */
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
@@ -18,7 +22,6 @@ public class HttpTaskServer {
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
 
-       // taskManager = Managers.getDefaultFBTM();
         this.taskManager = (FileBackedTasksManager) taskManager;
 
         httpServer.createContext("/tasks", new AllTasksHandler(taskManager));
@@ -29,12 +32,12 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/history", new HistoryHandler(taskManager));
     }
 
-    public void start(){
+    public void start() {
         httpServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
-    public void stop(){
+    public void stop() {
         httpServer.stop(1);
         System.out.println("HTTP-сервер остановлен на " + PORT + " порту!");
     }
