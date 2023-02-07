@@ -123,4 +123,20 @@ public class HttpTaskServerTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void shouldSDeleteTask() {
+        manager.addTask(task);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create(getTaskUrl);
+
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+        try {
+            HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Assertions.assertEquals(0, manager.getListTask().size(), "Задачи Task не были удалены с сервера");
+        } catch (IOException | InterruptedException e){
+            e.printStackTrace();
+        }
+    }
 }
