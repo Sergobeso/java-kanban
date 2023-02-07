@@ -13,6 +13,6 @@ public class AllTasksHandler extends TaskHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        writeResponse(exchange, gson.toJson(manager.getPrioritizedTasks()), 200);
+        writeResponse(exchange, gson.toJson(manager.getListAllTask()), 200);
     }
 }
