@@ -30,6 +30,7 @@ public interface TaskManager {
     ArrayList<Task> getListTask();
     ArrayList<EpicTask> getListEpicTask();
     ArrayList<SubTask> getListSubTask();
+    ArrayList<Task> getListAllTask();
 
     // Удаление всех задач.
     void clearTask();
@@ -53,7 +54,7 @@ public interface TaskManager {
 
     // Получение списка всех подзадач определённого эпика.
     ArrayList<SubTask> getListSubEpicTask(EpicTask epicTask);
-    public List<SubTask> getAllSubTaskEpicId(int id);
+    List<SubTask> getAllSubTaskEpicId(int id);
 
     List<Task> getPrioritizedTasks();
 

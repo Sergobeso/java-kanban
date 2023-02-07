@@ -94,7 +94,13 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<SubTask> getListSubTask() {
         return new ArrayList<>(subTaskMap.values());
     }
-
+    public ArrayList<Task> getListAllTask(){
+        ArrayList<Task> allTasks = new ArrayList<>();
+        allTasks.addAll(getListTask());
+        allTasks.addAll(getListEpicTask());
+        allTasks.addAll(getListSubTask());
+        return allTasks;
+    }
 
     @Override
     public void clearTask() {
