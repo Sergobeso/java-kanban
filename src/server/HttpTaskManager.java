@@ -15,15 +15,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public HttpTaskManager(String urlServer) throws IOException, InterruptedException {
         client = new KVTaskClient(urlServer);
+        loadManagerServer();
+    }
 
+    public void loadManagerServer() {
         try {
             JsonElement jsonElement = JsonParser.parseString(client.load("task"));
-
-            if (jsonElement.isJsonObject()) {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                Task task = gson.fromJson(jsonObject, Task.class);
-                addTask(task);
-            } else {
+            if (!jsonElement.isJsonNull()) {
                 JsonArray jsonArray = jsonElement.getAsJsonArray();
                 for (JsonElement jsonElemen : jsonArray) {
                     JsonObject jsonObject = jsonElemen.getAsJsonObject();
@@ -33,11 +31,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             }
 
             jsonElement = JsonParser.parseString(client.load("epicTask"));
-            if (jsonElement.isJsonObject()) {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                EpicTask task = gson.fromJson(jsonObject, EpicTask.class);
-                addEpicTask(task);
-            } else {
+            if (!jsonElement.isJsonNull()) {
                 JsonArray jsonArray = jsonElement.getAsJsonArray();
                 for (JsonElement jsonElemen : jsonArray) {
                     JsonObject jsonObject = jsonElemen.getAsJsonObject();
@@ -47,12 +41,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             }
 
             jsonElement = JsonParser.parseString(client.load("subTask"));
-            if (jsonElement.isJsonObject()) {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                SubTask subTask = gson.fromJson(jsonObject, SubTask.class);
-                EpicTask epicTask = getEpicTaskById(subTask.getEpicId());
-                addSubTask(subTask, epicTask);
-            } else {
+            if (!jsonElement.isJsonNull()) {
                 JsonArray jsonArray = jsonElement.getAsJsonArray();
                 for (JsonElement jsonElemen : jsonArray) {
                     JsonObject jsonObject = jsonElemen.getAsJsonObject();
@@ -63,7 +52,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             }
 
             jsonElement = JsonParser.parseString(client.load("history"));
-            if (jsonElement.isJsonArray()) {
+            if (!jsonElement.isJsonNull()) {
                 ArrayList<String> list = new ArrayList<>();
                 for (String idStr : list) {
                     int id = Integer.parseInt(idStr);
@@ -74,10 +63,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     } else if (getSubTaskMap().containsKey(id)) {
                         getHistoryManager().add(getSubTaskById(id));
                     }
-
                 }
             }
-        } catch (IllegalStateException e) {
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
