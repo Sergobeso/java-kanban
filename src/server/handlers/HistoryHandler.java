@@ -1,12 +1,11 @@
 package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
 
 import java.io.IOException;
 
-public class HistoryHandler extends TaskHandler implements HttpHandler {
+public class HistoryHandler extends TaskHandlerAbstract {
     public HistoryHandler(TaskManager manager) {
         super(manager);
     }

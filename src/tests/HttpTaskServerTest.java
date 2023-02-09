@@ -39,7 +39,7 @@ public class HttpTaskServerTest {
     private final String getTaskUrl = "http://localhost:8080/tasks/task";
     private final String getEpcTaskUrl = "http://localhost:8080/tasks/epic";
     private final String getSubTaskUrl = "http://localhost:8080/tasks/subTask";
-    private final String getSubTaskEpicUrl = "http://localhost:8080/tasks/subTask/epic";
+    private final String getSubTaskEpicUrl = "http://localhost:8080/tasks/epic/subTask";
     private final String getHistoryUrl = "http://localhost:8080/tasks/history";
 
     @BeforeEach
