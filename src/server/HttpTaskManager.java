@@ -1,13 +1,16 @@
 package server;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import managers.FileBackedTasksManager;
 import modules.EpicTask;
 import modules.SubTask;
 import modules.Task;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private final Gson gson = new Gson();
@@ -23,12 +26,21 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonElement jsonElement = JsonParser.parseString(client.load("task"));
             if (!jsonElement.isJsonNull()) {
                 JsonArray jsonArray = jsonElement.getAsJsonArray();
+                Type typeOfObjectsList = new TypeToken<List<String>>(){}.getType();
+                ArrayList <String> objectsList = gson.fromJson(jsonElement, typeOfObjectsList);
+//                objectsList.stream().filter()
+
                 for (JsonElement jsonElemen : jsonArray) {
                     JsonObject jsonObject = jsonElemen.getAsJsonObject();
                     Task task = gson.fromJson(jsonObject, Task.class);
                     addTask(task);
                 }
             }
+/*
+Я бы предложил путь по упрощению парсинга.
+Gson довольно мощная библиотека и она может справиться с парсингом коллекции.
+Для этого нужно всего лишь получить тип, примерно так -  new TypeToken<List<String>>() {}.getType();
+И тебе не придется перебирать все элементы в массиве.* */
 
             jsonElement = JsonParser.parseString(client.load("epicTask"));
             if (!jsonElement.isJsonNull()) {
