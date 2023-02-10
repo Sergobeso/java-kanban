@@ -5,7 +5,7 @@ import managers.TaskManager;
 
 import java.io.IOException;
 
-public class AllTasksHandler extends TaskHandlerAbstract {
+public class AllTasksHandler extends TaskHandler {
     public AllTasksHandler(TaskManager manager) {
         super(manager);
     }

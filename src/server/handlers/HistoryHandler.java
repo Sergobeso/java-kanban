@@ -5,7 +5,7 @@ import managers.TaskManager;
 
 import java.io.IOException;
 
-public class HistoryHandler extends TaskHandlerAbstract {
+public class HistoryHandler extends TaskHandler {
     public HistoryHandler(TaskManager manager) {
         super(manager);
     }

@@ -6,7 +6,7 @@ import modules.EpicTask;
 
 import java.io.IOException;
 
-public class EpicSubTaskHandler extends TaskHandlerAbstract {
+public class EpicSubTaskHandler extends EpicHandler {
 
     public EpicSubTaskHandler(TaskManager manager) {
         super(manager);
@@ -14,11 +14,11 @@ public class EpicSubTaskHandler extends TaskHandlerAbstract {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String parametrs = exchange.getRequestURI().getRawQuery();
+        String parameters = exchange.getRequestURI().getRawQuery();
 
-        if (parametrs != null && !parametrs.isBlank()) {
+        if (parameters != null && !parameters.isBlank()) {
             try {
-                EpicTask epicTask = manager.getEpicTaskById(getId(parametrs));
+                EpicTask epicTask = manager.getEpicTaskById(getId(parameters));
                 writeResponse(exchange, gson.toJson(manager.getListSubEpicTask(epicTask)), 200);
             } catch (IOException | NullPointerException | NumberFormatException e) {
                 writeResponse(exchange, "Неверный формат ID", 400);
