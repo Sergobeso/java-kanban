@@ -8,7 +8,6 @@ import modules.SubTask;
 import modules.Task;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,49 +24,33 @@ public class HttpTaskManager extends FileBackedTasksManager {
         try {
             JsonElement jsonElement = JsonParser.parseString(client.load("task"));
             if (!jsonElement.isJsonNull()) {
-                JsonArray jsonArray = jsonElement.getAsJsonArray();
-                Type typeOfObjectsList = new TypeToken<List<String>>(){}.getType();
-                ArrayList <String> objectsList = gson.fromJson(jsonElement, typeOfObjectsList);
-//                objectsList.stream().filter()
-
-                for (JsonElement jsonElemen : jsonArray) {
-                    JsonObject jsonObject = jsonElemen.getAsJsonObject();
-                    Task task = gson.fromJson(jsonObject, Task.class);
-                    addTask(task);
-                }
+                List<Task> task = gson.fromJson(jsonElement, new TypeToken<List<Task>>() {
+                }.getType());
+                task.forEach(this::addTask);
             }
-/*
-Я бы предложил путь по упрощению парсинга.
-Gson довольно мощная библиотека и она может справиться с парсингом коллекции.
-Для этого нужно всего лишь получить тип, примерно так -  new TypeToken<List<String>>() {}.getType();
-И тебе не придется перебирать все элементы в массиве.* */
-
             jsonElement = JsonParser.parseString(client.load("epicTask"));
             if (!jsonElement.isJsonNull()) {
-                JsonArray jsonArray = jsonElement.getAsJsonArray();
-                for (JsonElement jsonElemen : jsonArray) {
-                    JsonObject jsonObject = jsonElemen.getAsJsonObject();
-                    EpicTask task = gson.fromJson(jsonObject, EpicTask.class);
-                    addEpicTask(task);
-                }
+                List<EpicTask> epicTasks = gson.fromJson(jsonElement, new TypeToken<List<EpicTask>>() {
+                }.getType());
+                epicTasks.forEach(this::addEpicTask);
             }
 
             jsonElement = JsonParser.parseString(client.load("subTask"));
             if (!jsonElement.isJsonNull()) {
-                JsonArray jsonArray = jsonElement.getAsJsonArray();
-                for (JsonElement jsonElemen : jsonArray) {
-                    JsonObject jsonObject = jsonElemen.getAsJsonObject();
-                    SubTask subTask = gson.fromJson(jsonObject, SubTask.class);
-                    EpicTask epicTask = getEpicTaskById(subTask.getEpicId());
-                    addSubTask(subTask, epicTask);
-                }
+                List<SubTask> subTasks = gson.fromJson(jsonElement, new TypeToken<List<SubTask>>() {
+                }.getType());
+                subTasks.stream().map(subTask -> {
+                    EpicTask epic = getEpicTaskById(subTask.getEpicId());
+                    addSubTask(subTask, epic);
+                    return null;
+                });
             }
 
             jsonElement = JsonParser.parseString(client.load("history"));
             if (!jsonElement.isJsonNull()) {
-                ArrayList<String> list = new ArrayList<>();
-                for (String idStr : list) {
-                    int id = Integer.parseInt(idStr);
+                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                for (JsonElement idStr : jsonArray) {
+                    int id = Integer.parseInt(idStr.getAsJsonObject().get("id").getAsString());
                     if (getTaskMap().containsKey(id)) {
                         getHistoryManager().add(getTaskById(id));
                     } else if (getEpicTaskMap().containsKey(id)) {
