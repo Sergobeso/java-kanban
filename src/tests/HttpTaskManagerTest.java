@@ -83,7 +83,5 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Assertions.assertEquals(gson.fromJson(client.load("222"), EpicTask.class), epicTask, "Задача subTask не была добавлена");
         Assertions.assertEquals(gson.fromJson(client.load("333"), SubTask.class), subTask, "Задача epicTask не была добавлена");
     }
-
-
 }
 
